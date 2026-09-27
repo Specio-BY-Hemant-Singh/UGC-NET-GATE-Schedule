@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Completion state for every study block in the 19-week plan.
+// blockKey format: "w{week}-d{0-6}-b{index}"  e.g. "w01-d0-b2"
+model TaskCompletion {
+  id        String   @id @default(cuid())
+  blockKey  String   @unique
+  completed Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+}
+
+// Daily habit tracker. date format: "YYYY-MM-DD" (Asia/Kolkata)
+model HabitLog {
+  id        String   @id @default(cuid())
+  date      String
+  habitId   String
+  done      Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, habitId])
+}
+
+// Simple key-value store (e.g. last visited week)
+model AppSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
