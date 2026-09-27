@@ -1,0 +1,342 @@
+   121→  ],
+   122→  milestone: 'Normalisation speed drill: 3 problems in 20 min · 40-Q test at 70%+',
+   123→  days: [
+   124→    { kind: 'weekday', blocks: [
+   125→      b(S1, 120, 'theory', 'NET', 'dbms', 'Functional Dependencies & Normalisation', ['FDs, attribute closure, minimal cover', '1NF → 2NF → 3NF → BCNF with decompositions', 'Lossless join & dependency-preservation checks']),
+   126→      b(S2, 70, 'drill', 'NET', 'dbms', 'Normalisation Speed Drill', ['3 full normalisation problems in 20 min (exit milestone)', 'Then 10 MCQs on normal forms']),
+   127→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Data Interpretation', ['10 timed questions', 'Growth rates, averages, ratio traps']),
+   128→      b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: Joint, Marginal & Conditional Probability', ['Joint distributions from tables', 'Marginalisation; conditional probability discipline']),
+   129→      nightCap(),
+   130→    ]},
+   131→    { kind: 'weekday', blocks: [
+   132→      b(S1, 120, 'theory', 'NET', 'dbms', 'Transactions & Concurrency', ['ACID; transaction states; logs & recovery', '2PL, conflict vs view serializability', 'Deadlock handling: prevention, avoidance, detection']),
+   133→      b(S2, 70, 'drill', 'NET', 'dbms', 'Drill: Concurrency & Recovery MCQs', ['15 questions incl. schedule-conflict checks', 'Draw precedence graphs for 3 schedules']),
+   134→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Reasoning', ['10 timed questions', 'Mixed mathematical + logical reasoning']),
+   135→      b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: Bayes Theorem', ['Bayes with partition diagrams', 'Prior vs likelihood discipline — the classic trap'], 'Draw the partition tree first, always'),
+   136→      nightCap(),
+   137→    ]},
+   138→    { kind: 'weekday', blocks: [
+   139→      b(S1, 120, 'theory', 'NET', 'dbms', 'Warehousing, Mining & NoSQL Survey', ['Star/snowflake schemas, hierarchies, measures', 'OLAP vs OLTP; association rules, classification, clustering', 'NoSQL families & CAP; Hadoop/HDFS/MapReduce one-liners']),
+   140→      b(S2, 70, 'drill', 'NET', 'dbms', 'Drill: Warehousing & Mining MCQs', ['15 questions: roll-ups, measures, taxonomy', 'Fact-sheet: mining algorithms on one page']),
+   141→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Comprehension', ['2 timed passages', 'Underline evidence before answering']),
+   142→      b(S4, 50, 'practice', 'GATE', 'ps', 'P&S: Bayes Problem Set', ['25 Bayes problems: partitions & tree diagrams', 'Solve every variant twice — fresh, then cold']),
+   143→      nightCap(),
+   144→    ]},
+   145→    { kind: 'weekday', blocks: [
+   146→      b(S1, 120, 'theory', 'NET', 'dsa', 'Trees: BST, AVL, B & B+ Trees', ['BST operations; all four traversals', 'AVL rotations: LL, RR, LR, RL', 'B/B+ tree order, insertion, fan-out arithmetic']),
+   147→      b(S2, 70, 'drill', 'NET', 'dsa', 'Drill: Trace AVL Rotations', ['Hand-run 5 insertion sequences', '10 B/B+ tree MCQs incl. order computation']),
+   148→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: ICT', ['10 timed questions', 'ICT in education; initiatves recap']),
+   149→      b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: Bayes Traps + Conditional Expectation', ['P(A|B) vs P(B|A) discipline', 'E[Y|X] and variance decomposition identities']),
+   150→      nightCap(),
+   151→    ]},
+   152→    { kind: 'weekday', blocks: [
+   153→      b(S1, 120, 'theory', 'NET', 'dsa', 'Graphs: Traversals, MST, Shortest Paths', ['BFS/DFS + applications; topological sort', 'Prim & Kruskal; Dijkstra, Bellman-Ford, Floyd-Warshall', 'Max-flow basics']),
+   154→      b(S2, 70, 'drill', 'NET', 'dsa', 'Drill: Hand-Run Graphs', ['BFS/DFS/Dijkstra by hand on an 8-node graph', '15 MCQs: MST edges & shortest-path outputs']),
+   155→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Research Aptitude', ['10 timed questions', 'Sampling, hypothesis, validity & reliability']),
+   156→      b(S4, 50, 'drill', 'GATE', 'ps', 'P&S: Probability Quiz Prep (20 Q)', ['Mixed counting + Bayes timed set', 'Fix the two slowest problem types tonight']),
+   157→      nightCap(),
+   158→    ]},
+   159→    satTest('DBMS (full) + DSA (trees/graphs) + Bayes', ['Two older topics mixed in: counting, complexity']),
+   160→    sunday('Stage Week 3: OS notes, Banker\u2019s template, expectation problem set'),
+   161→  ],
+   162→}
+   163→
+   164→// ── Week 3 ───────────────────────────────────────────────────────────────────
+   165→const W3: WeekSpec = {
+   166→  week: 3, phase: 1,
+   167→  title: 'OS Complete + DSA-3 (DP & Recurrences) · GATE Discrete RVs',
+   168→  focus: 'NET 62% · GATE 38%',
+   169→  notes: [
+   170→    'OS numericals are ritual skills: Gantt charts, page traces, Banker\u2019s runs — done by hand.',
+   171→    'If you cannot do the computation on paper in 90 seconds, it is not yet learned.',
+   172→  ],
+   173→  milestone: 'Phase checkpoint: 60-Q across 4 units at 65%+ · rank units by accuracy',
+   174→  days: [
+   175→    { kind: 'weekday', blocks: [
+   176→      b(S1, 120, 'theory', 'NET', 'os', 'Processes, Threads & CPU Scheduling', ['Processes & IPC; threads and models', 'FCFS, SJF, SRTF, RR — Gantt charts + waiting/turnaround', 'Convoy effect, starvation']),
+   177→      b(S2, 70, 'drill', 'NET', 'os', 'Scheduling Numericals', ['5 full Gantt charts computed by hand', 'Compare average waiting times across algorithms']),
+   178→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Data Interpretation', ['10 timed questions', 'Speed comes from cadence — twice weekly is the rule']),
+   179→      b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: Discrete RVs — PMF & Expectation', ['PMF & CDF; expectation of transformations', 'E[aX+b], Var rules, indicator tricks']),
+   180→      nightCap(),
+   181→    ]},
+   182→    { kind: 'weekday', blocks: [
+   183→      b(S1, 120, 'theory', 'NET', 'os', 'Synchronisation & Deadlocks', ['Semaphores, Peterson\u2019s solution, monitors', 'Producer-consumer, readers-writers, dining philosophers', 'Deadlock conditions + Banker\u2019s algorithm']),
+   184→      b(S2, 70, 'drill', 'NET', 'os', 'Drill: Banker\u2019s Runs + Sync MCQs', ['2 full Banker\u2019s algorithm runs by hand', '15 sync MCQs incl. semaphore value traces']),
+   185→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Reasoning', ['10 timed questions', 'Direction sense, blood relations, coding-decoding']),
+   186→      b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: Conditional Expectation & Variance', ['E[Y|X] with partitions', 'Law of total variance — worked examples']),
+   187→      nightCap(),
+   188→    ]},
+   189→    { kind: 'weekday', blocks: [
+   190→      b(S1, 120, 'theory', 'NET', 'os', 'Memory Management & Storage', ['Paging, segmentation, TLB; Belady\u2019s anomaly', 'Page replacement: FIFO, LRU, Optimal', 'Disk scheduling SSTF/SCAN/C-SCAN; RAID levels']),
+   191→      b(S2, 70, 'drill', 'NET', 'os', 'Page-Replacement Traces', ['4 reference strings traced by hand', 'Fault counts compared across policies']),
+   192→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Comprehension', ['2 timed passages', 'Time discipline: 7 minutes per passage max']),
+   193→      b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: Bernoulli, Binomial & Uniform', ['Bernoulli & binomial: at-least/at-most cases', 'Complement rule for \u201Cat least one\u201D questions']),
+   194→      nightCap(),
+   195→    ]},
+   196→    { kind: 'weekday', blocks: [
+   197→      b(S1, 120, 'theory', 'NET', 'dsa', 'DP, Greedy & Backtracking', ['DP vs greedy; LCS, knapsack, matrix chain', 'When greedy fails — exchange argument', 'Backtracking: n-queens, subset sum']),
+   198→      b(S2, 70, 'drill', 'NET', 'dsa', 'Drill: 12 DP/Greedy Problems', ['Classify each as DP or greedy + why', 'Solve 5 fully by hand']),
+   199→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: ICT', ['10 timed questions', 'Cloud models SaaS/PaaS/IaaS; IoT one-liners']),
+   200→      b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: Descriptive Statistics', ['Mean/median/mode on grouped data', 'Std dev, correlation & covariance computations']),
+   201→      nightCap(),
+   202→    ]},
+   203→    { kind: 'weekday', blocks: [
+   204→      b(S1, 120, 'theory', 'NET', 'dsa', 'Recurrences, String Matching + Phase Sweep', ['Master-method cases; substitution checks', 'KMP & Rabin-Karp at concept level', 'Quick sweep of Weeks 1–3 for the checkpoint']),
+   205→      b(S2, 70, 'drill', 'NET', 'mixed', 'Phase Checkpoint Prep Set', ['30-Q mixed timed drill across the four core units', 'Log every miss with a root cause']),
+   206→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Teaching Aptitude', ['10 timed questions', 'NTA recycles conceptual anchors — note repeats']),
+   207→      b(S4, 50, 'practice', 'GATE', 'ps', 'P&S: Expectation Problem Set', ['20 expectation/variance problems, notes closed', 'Flag anything over 4 minutes']),
+   208→      nightCap(),
+   209→    ]},
+   210→    satTest('Phase checkpoint week: DBMS + DSA + OS + recurrences', ['60 questions, 90 minutes — the Phase 1 core gate']),
+   211→    sunday('Rank units by accuracy; weakest unit earns Phase-2 patch hours'),
+   212→  ],
+   213→}
+   214→
+   215→// ── Week 4 ───────────────────────────────────────────────────────────────────
+   216→const W4: WeekSpec = {
+   217→  week: 4, phase: 1,
+   218→  title: 'TOC-1 (Regular Languages) + COA-1 · GATE Continuous RVs',
+   219→  focus: 'NET 62% · GATE 38%',
+   220→  notes: [
+   221→    'TOC rewards construction over reading: DFAs you build are questions you own.',
+   222→    'Continuous distributions: memorise every PDF and its mean/variance — flashcard material.',
+   223→  ],
+   224→  milestone: 'Bayes & counting drill at 80% · 40-Q test at 65%+',
+   225→  days: [
+   226→    { kind: 'weekday', blocks: [
+   227→      b(S1, 120, 'theory', 'NET', 'toc', 'Regular Languages: DFA/NFA, Regex, Pumping Lemma', ['DFA & NFA design; subset construction', 'Minimization; regular expressions; Arden\u2019s theorem', 'Pumping lemma & closure properties']),
+   228→      b(S2, 70, 'drill', 'NET', 'toc', 'Drill: Construct Automata', ['5 DFAs designed from scratch', '2 NFA→DFA subset constructions by hand']),
+   229→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Data Interpretation', ['10 timed questions', 'Data tables with multi-step ratios']),
+   230→      b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: Continuous RVs — PDF/CDF', ['PDF, CDF, conditional PDF', 'Uniform & exponential; memoryless property (trap)']),
+   231→      nightCap(),
+   232→    ]},
+   233→    { kind: 'weekday', blocks: [
+   234→      b(S1, 120, 'theory', 'NET', 'toc', 'CFG, PDA & CFL Properties', ['CFG ambiguity; CNF & GNF conversions', 'PDA & NPDA; equivalence with CFG', 'CFL closure properties']),
+   235→      b(S2, 70, 'drill', 'NET', 'toc', 'Drill: Grammar Conversions', ['2 grammars → CNF by hand', '2 grammars → GNF by hand']),
+   236→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Reasoning', ['10 timed questions', 'Syllogisms with Venn sketches']),
+   237→      b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: Uniform, Exponential & Poisson', ['Poisson process scaling with interval length (trap)', 'Exponential: memoryless drills']),
+   238→      nightCap(),
+   239→    ]},
+   240→    { kind: 'weekday', blocks: [
+   241→      b(S1, 120, 'theory', 'NET', 'coa', 'COA-1: Number Systems & K-Maps', ['Bases, complements, IEEE 754, Hamming codes', 'K-map simplification up to 4 variables', 'Combinational circuits: adders, MUX, decoders']),
+   242→      b(S2, 70, 'drill', 'NET', 'coa', 'Drill: IEEE 754 & K-Maps', ['10 IEEE 754 / Hamming numericals by hand', '8 K-map problems incl. don\u2019t-cares']),
+   243→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Comprehension', ['2 timed passages', 'Note the question\u2019s own vocabulary']),
+   244→      b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: Normal & Standard Normal', ['Standardisation drills; z-table fluency', 'Symmetry & interval computations']),
+   245→      nightCap(),
+   246→    ]},
+   247→    { kind: 'weekday', blocks: [
+   248→      b(S1, 120, 'theory', 'NET', 'coa', 'COA-1: Flip-Flops, Counters & Sequential Circuits', ['SR, JK, D, T flip-flops; excitation tables', 'Counters & registers; sequence detection', 'Timing diagrams']),
+   249→      b(S2, 70, 'drill', 'NET', 'coa', 'Drill: Sequential Circuits', ['10 flip-flop/counter numericals', 'Draw state diagrams for 3 counters']),
+   250→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: ICT', ['10 timed questions', 'Memory-module cadence maintained']),
+   251→      b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: t & Chi-Squared Distributions', ['When t vs z: sample-size conditions', 'Chi-squared: shape & uses preview']),
+   252→      nightCap(),
+   253→    ]},
+   254→    { kind: 'weekday', blocks: [
+   255→      b(S1, 120, 'drill', 'NET', 'mixed', 'TOC + COA Mixed Drill', ['40-Q timed set across both units', 'Every miss → error log with root cause']),
+   256→      b(S2, 70, 'review', 'NET', 'mixed', 'Error Re-solve: This Week\u2019s Misses', ['Re-solve cold, no notes', 'Pattern check: which sub-topic repeats?']),
+   257→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Teaching Aptitude', ['10 timed questions', 'Teaching methods & models recap']),
+   258→      b(S4, 50, 'practice', 'GATE', 'ps', 'P&S: Continuous Distributions Set', ['25 mixed problems: uniform/exp/Poisson/normal', 'Notes closed after first 10']),
+   259→      nightCap(),
+   260→    ]},
+   261→    satTest('TOC-1 + COA-1 + continuous distributions', ['Include 5 previous-year style questions']),
+   262→    sunday('Stage Week 5: logic sets, cache templates, inference toolkit notes'),
+   263→  ],
+   264→}
+   265→
+   266→// ── Week 5 ───────────────────────────────────────────────────────────────────
+   267→const W5: WeekSpec = {
+   268→  week: 5, phase: 1,
+   269→  title: 'Discrete-1 + COA-2 (Pipeline & Cache) · GATE CLT & Inference',
+   270→  focus: 'NET 62% · GATE 38%',
+   271→  notes: [
+   272→    'The hardest GATE week of Phase 1 — protect it. CLT + inference pay out every DA paper.',
+   273→    'Cache mapping and subnetting later this week are the two most repeated numerical formats.',
+   274→  ],
+   275→  milestone: 'CLT/hypothesis problem set at 80% · 40-Q test at 65%+',
+   276→  days: [
+   277→    { kind: 'weekday', blocks: [
+   278→      b(S1, 120, 'theory', 'NET', 'disc', 'Discrete-1: Logic & Relations', ['Propositional & predicate logic; normal forms', 'Inference rules; quantifiers', 'Sets, relations: equivalence, partial orders, Hasse diagrams, lattices']),
+   279→      b(S2, 70, 'drill', 'NET', 'disc', 'Drill: Logic Conversions', ['20 conversions: CNF/DNF, inference steps', 'Draw Hasse diagrams for 3 posets']),
+   280→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Data Interpretation', ['10 timed questions', 'Multi-chart questions — label before computing']),
+   281→      b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: Central Limit Theorem', ['CLT statement & applicability vs exact binomial', 'Sampling distribution of the mean', 'Standardisation drills']),
+   282→      nightCap(),
+   283→    ]},
+   284→    { kind: 'weekday', blocks: [
+   285→      b(S1, 120, 'theory', 'NET', 'disc', 'Discrete-1: Counting, Induction & Bayes Numericals', ['Pigeonhole, permutations & combinations', 'Inclusion-exclusion; induction proofs', 'Bayes\u2019 theorem numericals']),
+   286→      b(S2, 70, 'drill', 'NET', 'disc', 'Drill: Counting & Probability Set', ['30 problems, 80% accuracy target', 'Untimed first pass, timed second pass']),
+   287→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Reasoning', ['10 timed questions', 'Clock/calendar problems count too']),
+   288→      b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: Confidence Intervals', ['CI construction & interpretation', 'Margin of error arithmetic']),
+   289→      nightCap(),
+   290→    ]},
+   291→    { kind: 'weekday', blocks: [
+   292→      b(S1, 120, 'theory', 'NET', 'coa', 'COA-2: Addressing Modes & Control Unit', ['Every addressing mode + effective-address computation', 'Instruction cycle, interrupts & priority', 'Microprogrammed control; RISC vs CISC']),
+   293→      b(S2, 70, 'drill', 'NET', 'coa', 'Drill: Effective-Address Numericals', ['12 addressing-mode computations by hand', '90-second rule per computation']),
+   294→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Comprehension', ['2 timed passages', 'Flag >60s questions, move on']),
+   295→      b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: z-Test & t-Test', ['Test selection: when z, when t', 'One-sample & two-sample worked flows']),
+   296→      nightCap(),
+   297→    ]},
+   298→    { kind: 'weekday', blocks: [
+   299→      b(S1, 120, 'theory', 'NET', 'coa', 'COA-2: Pipelining, Cache, Virtual Memory & I/O', ['Pipeline hazards, forwarding, speedup numericals', 'Cache: direct/associative/set-associative + hit ratios', 'Virtual memory & MMU; interrupts & DMA cycle-stealing']),
+   300→      b(S2, 70, 'drill', 'NET', 'coa', 'Drill: Cache & Pipeline Timing', ['6 cache-mapping address splits by hand', '4 pipeline speedup computations']),
+   301→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: ICT', ['10 timed questions', 'E-governance initiative names — flashcard check']),
+   302→      b(S4, 50, 'practice', 'GATE', 'ps', 'P&S: Chi-Squared Test + Mixed', ['Goodness-of-fit & independence worked examples', '20-problem mixed inference set']),
+   303→      nightCap(),
+   304→    ]},
+   305→    { kind: 'weekday', blocks: [
+   306→      b(S1, 120, 'drill', 'NET', 'mixed', 'COA + Discrete Mixed Drill', ['40-Q timed set across both', 'Error log: tag every miss']),
+   307→      b(S2, 70, 'review', 'NET', 'mixed', 'Error Re-solve: Cold', ['Yesterday\u2019s misses re-solved without notes', 'Build the trap list: absolute statements, unit slips']),
+   308→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Teaching Aptitude', ['10 timed questions', 'Research aptitude 5-question add-on']),
+   309→      b(S4, 50, 'practice', 'GATE', 'ps', 'P&S: Inference Mixed Set (30)', ['z/t/chi + CI + CLT all together', 'Simulates exam conditions — timed']),
+   310→      nightCap(),
+   311→    ]},
+   312→    satTest('Discrete-1 + COA-2 + inference toolkit', ['This test closes the heaviest GATE math block']),
+   313→    sunday('Stage Week 6: C output-prediction sets, parse-table templates'),
+   314→  ],
+   315→}
+   316→
+   317→// ── Week 6 ───────────────────────────────────────────────────────────────────
+   318→const W6: WeekSpec = {
+   319→  week: 6, phase: 1,
+   320→  title: 'PL & Graphics + TOC-2 (TM & Compilers) · GATE Linear Algebra I',
+   321→  focus: 'NET 60% · GATE 40%',
+   322→  notes: [
+   323→    'C output-prediction is the single most bankable question format in Unit 3 — daily reps.',
+   324→    'Linear Algebra I opens the GATE-exclusive spine; vector spaces first, mechanics later.',
+   325→  ],
+   326→  milestone: 'Parse-table drill done · TM construction ×2 · 40-Q 65%+ · LinAlg I quiz',
+   327→  days: [
+   328→    { kind: 'weekday', blocks: [
+   329→      b(S1, 120, 'theory', 'NET', 'plg', 'C Deep: Pointers, Storage Classes, Structures', ['Pointers & pointer arithmetic; arrays vs pointers', 'Storage classes; call semantics', 'Structures, unions, file handling, preprocessor']),
+   330→      b(S2, 70, 'drill', 'NET', 'plg', 'Drill: C Output Prediction', ['15 output-prediction questions', 'Solve on paper before checking — always']),
+   331→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Data Interpretation', ['10 timed questions', 'Maintain the twice-weekly cadence']),
+   332→      b(S4, 50, 'theory', 'GATE', 'la', 'LA: Vector Spaces & Subspaces', ['Vector spaces, subspaces, span', 'Linear dependence/independence', 'Basis & dimension intuition']),
+   333→      nightCap(),
+   334→    ]},
+   335→    { kind: 'weekday', blocks: [
+   336→      b(S1, 120, 'theory', 'NET', 'plg', 'C++ & OOP + Web Basics', ['Inheritance forms; compile-time vs runtime polymorphism', 'Constructors, destructors, overloading, virtual functions', 'Templates, exceptions; Java/servlets/applets + HTML/XML at definition level']),
+   337→      b(S2, 70, 'drill', 'NET', 'plg', 'Drill: OOP Concept Matching', ['10 OOP output/concept questions', 'Virtual-function dispatch traced by hand']),
+   338→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Reasoning', ['10 timed questions', 'Mix in 2 number-series items']),
+   339→      b(S4, 50, 'theory', 'GATE', 'la', 'LA: Systems of Equations & Elimination', ['Gaussian elimination; consistency conditions', '20 hand-eliminations scheduled this week']),
+   340→      nightCap(),
+   341→    ]},
+   342→    { kind: 'weekday', blocks: [
+   343→      b(S1, 120, 'theory', 'NET', 'plg', 'Computer Graphics', ['DDA & Bresenham; mid-point circle & ellipse', '2D transforms as matrices; window-to-viewport', 'Clipping: Cohen-Sutherland, Liang-Barsky; Bezier/B-spline; Phong vs Gouraud']),
+   344→      b(S2, 70, 'drill', 'NET', 'plg', 'Drill: Graphics Numericals', ['6 Bresenham computations by hand', '2 transform-matrix multiplications']),
+   345→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Comprehension', ['2 timed passages', 'Keep under 7 minutes each']),
+   346→      b(S4, 50, 'theory', 'GATE', 'la', 'LA: Rank, Nullity & Determinants', ['Rank-nullity accounting', 'Determinant properties & computations', '30 rank/nullity/consistency problems scheduled']),
+   347→      nightCap(),
+   348→    ]},
+   349→    { kind: 'weekday', blocks: [
+   350→      b(S1, 120, 'theory', 'NET', 'toc', 'TOC-2: Turing Machines & Undecidability', ['TM variants; universal TM; Church-Turing thesis', 'Recursive vs recursively enumerable; Chomsky hierarchy', 'Halting problem, PCP, Rice\u2019s theorem']),
+   351→      b(S2, 70, 'drill', 'NET', 'toc', 'Drill: TM Construction', ['Construct TMs for 2 sample problems', 'Chomsky hierarchy sheet: one example language per level']),
+   352→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: ICT', ['10 timed questions', 'Hardware categories + OS basics']),
+   353→      b(S4, 50, 'practice', 'GATE', 'la', 'LA-I Problem Set', ['20 hand-eliminations + rank/nullity problems', 'Notes closed for the last 10']),
+   354→      nightCap(),
+   355→    ]},
+   356→    { kind: 'weekday', blocks: [
+   357→      b(S1, 120, 'theory', 'NET', 'toc', 'Compilers: Parsing & Code Generation', ['Phases; left-recursion removal & left factoring', 'LL(1) FIRST/FOLLOW; LR(0), SLR(1), CLR(1), LALR(1)', 'SDT attributes; runtime, intermediate code, optimisation']),
+   358→      b(S2, 70, 'drill', 'NET', 'toc', 'Drill: Parse-Table Construction', ['2 LL(1) tables + 2 SLR(1) tables by hand', 'A parse table you built is a question you own']),
+   359→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Teaching Aptitude', ['10 timed questions', 'Evaluation systems recap']),
+   360→      b(S4, 50, 'test', 'GATE', 'la', 'LinAlg I Timed Quiz (20 Q)', ['Closed book, 40 minutes', 'Anything below 16/20 enters Saturday repair']),
+   361→      nightCap(),
+   362→    ]},
+   363→    satTest('PL & Graphics + TOC-2 + compilers', ['Add 5 Bresenham/transform items to the test']),
+   364→    sunday('Stage Week 7: networks subnetting drill, COCOMO notes, AI trace tables'),
+   365→  ],
+   366→}
+   367→
+   368→// ── Week 7 ───────────────────────────────────────────────────────────────────
+   369→const W7: WeekSpec = {
+   370→  week: 7, phase: 1,
+   371→  title: 'Networks + SE + AI · GATE Linear Algebra II · NET Baseline Mock',
+   372→  focus: 'NET 58% · GATE 42%',
+   373→  notes: [
+   374→    'Coverage completes this week: 100% of the NET syllabus touched at least once.',
+   375→    'Saturday is the full-syllabus baseline mock — its score calibrates every Phase 2 decision.',
+   376→  ],
+   377→  milestone: 'Baseline mock (100 Q, timed) recorded · every unit touched at least once',
+   378→  days: [
+   379→    { kind: 'weekday', blocks: [
+   380→      b(S1, 120, 'theory', 'NET', 'net', 'Networks-1: Fundamentals & Data Link', ['Transmission modes; Nyquist & Shannon capacity', 'Encoding, modulation, multiplexing', 'Error control: parity, CRC, checksum, Hamming', 'OSI vs TCP-IP protocol-per-layer map; sliding window (GBN/SR)']),
+   381→      b(S2, 70, 'drill', 'NET', 'net', 'Drill: Capacity & Window Numericals', ['10 Nyquist/Shannon computations', '5 sliding-window problems']),
+   382→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Data Interpretation', ['10 timed questions', 'Final cadence week — keep it unbroken']),
+   383→      b(S4, 50, 'theory', 'GATE', 'la', 'LA-II: Eigenvalues & Diagonalisation', ['Eigenvalues/vectors; diagonalisation conditions', '35 eigen/SVD problems scheduled this week']),
+   384→      nightCap(),
+   385→    ]},
+   386→    { kind: 'weekday', blocks: [
+   387→      b(S1, 120, 'theory', 'NET', 'net', 'Networks-2: IP, Routing, Transport & Security', ['IPv4 classful/classless + subnetting; IPv6; fragmentation; ARP', 'Distance-vector vs link-state; TCP/UDP/SCTP, congestion', 'Ports table; DES/AES/RSA, Diffie-Hellman, signatures, VPNs', 'GSM, mobile IP, WLANs, MANETs; SaaS/PaaS/IaaS; IoT']),
+   388→      b(S2, 70, 'drill', 'NET', 'net', 'Drill: The Subnetting Ritual', ['20-problem subnetting drill — reflex speed', 'Port-table flashcards: 15 protocols']),
+   389→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Reasoning', ['10 timed questions', 'Puzzles under 90 seconds each']),
+   390→      b(S4, 50, 'theory', 'GATE', 'la', 'LA-II: Projections & Quadratic Forms', ['Projection matrices; P\u00B2 = P consequences', 'Orthogonal + idempotent ⇒ symmetric projection', 'Quadratic forms & definiteness']),
+   391→      nightCap(),
+   392→    ]},
+   393→    { kind: 'weekday', blocks: [
+   394→      b(S1, 120, 'theory', 'NET', 'se', 'Software Engineering', ['Process models: waterfall → agile family (XP, Scrum, DSDM, FDD, Crystal)', 'Requirements & SRS; cohesion/coupling ordering', 'McCall & ISO 9126; LOC/FP; COCOMO organic/semi/embedded', 'Testing: V&V, cyclomatic complexity, black/white box, alpha/beta, regression']),
+   395→      b(S2, 70, 'drill', 'NET', 'se', 'Drill: SE Recall + COCOMO', ['30 MCQs — pure recall unit', '5 COCOMO effort computations by hand']),
+   396→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Comprehension', ['2 timed passages', 'Accuracy over speed now — exam approaches']),
+   397→      b(S4, 50, 'theory', 'GATE', 'la', 'LA-II: LU Decomposition & SVD', ['LU mechanics; SVD singular values vs eigenvalues (trap)', '\u03A3 entries are sq. roots of eigenvalues of A\u1D40A']),
+   398→      nightCap(),
+   399→    ]},
+   400→    { kind: 'weekday', blocks: [
+   401→      b(S1, 120, 'theory', 'NET', 'ai', 'Artificial Intelligence (NET Unit 10)', ['Agents; state-space search: BFS, DFS, best-first, A* + admissibility', 'Hill climbing failure modes; minimax & alpha-beta with pruning counts', 'KR: logic, semantic nets, frames, scripts; expert systems', 'Planning STRIPS; NLP parsing; fuzzy sets; GA cycle; perceptron/MLP/SOM/Hopfield']),
+   402→      b(S2, 70, 'drill', 'NET', 'ai', 'Drill: Search & Logic Hand-Simulation', ['Minimax + alpha-beta trace on a game tree', 'Fuzzy set operations; GA pipeline ordering quiz']),
+   403→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: ICT', ['10 timed questions', 'ICT two-pager condensed — final version']),
+   404→      b(S4, 50, 'practice', 'GATE', 'la', 'LA-II: SVD & Projection Problem Set', ['20 problems: SVD, projections, partition matrices', 'Time each — max 4 minutes']),
+   405→      nightCap(),
+   406→    ]},
+   407→    { kind: 'weekday', blocks: [
+   408→      b(S1, 120, 'revision', 'NET', 'mixed', 'Full-Syllabus Sweep + Fact-Sheet Cold-Writes', ['Sweep all 10 units from fact sheets only', 'Cold-write 3 weakest fact sheets from memory', 'Corrections in second colour = weekend targets']),
+   409→      b(S2, 70, 'drill', 'NET', 'mixed', 'Mixed 30-Q Timed Set', ['All units, exam pacing', 'Zero-blank habit: answer everything']),
+   410→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Teaching Aptitude', ['10 timed questions', 'Final pre-mock GA warm-up']),
+   411→      b(S4, 50, 'test', 'GATE', 'la', 'LinAlg II Consolidation Quiz (20 Q)', ['Eigen/SVD/projections/quadratic forms mixed', 'Exit bar: 16/20']),
+   412→      nightCap(),
+   413→    ]},
+   414→    { kind: 'saturday', blocks: [
+   415→      b('09:00 – 11:00', 120, 'test', 'NET', 'mixed', 'NET BASELINE MOCK 0 — Paper 2, 100 Q (120 min)', ['Full pattern, timed, morning start', 'Record the score — it is the Phase 2 reference point', 'Answer all 100: zero-blank doctrine from mock 1']),
+   416→      b('11:15 – 12:45', 90, 'review', 'NET', 'mixed', 'Mock Autopsy', ['Score split by unit; tag every error: known / shaky / unknown', 'Guess-quality audit: how many elimination guesses landed', 'Time audit: where did the 120 minutes go?']),
+   417→      b(SA3, 75, 'admin', 'BOTH', 'mixed', 'Gap List + Phase 2 Patch Plan', ['Three weakest units named', 'Each gets a dated repair slot in Weeks 8–9']),
+   418→      b(SA4, 60, 'revision', 'GATE', 'la', 'GATE LA Formula-Sheet Pass', ['Eigen/SVD/projection sheet written from memory', 'Correct against notes; star gaps']),
+   419→    ]},
+   420→    sunday('Plan Phase 2: mock cadence, PYQ set order, Paper 1 full sets'),
+   421→  ],
+   422→}
+   423→
+   424→// ── Phase 2 helpers ──────────────────────────────────────────────────────────
+   425→const pyqDay = (set: string, setSubs: string[], gateTopic: string, gateSubs: string[], p1: string): DaySpec => ({
+   426→  kind: 'weekday',
+   427→  blocks: [
+   428→    b(P1, 120, 'test', 'NET', 'mixed', set, setSubs),
+   429→    b(P2, 60, 'review', 'NET', 'mixed', 'Same-Day Review: Score, Tag, Route', ['Score & split by unit', 'Tag every error: concept gap / trap / misread / time pressure', 'Concept gaps get a 72-hour re-solve date']),
+   430→    b(S3, 25, 'practice', 'NET', 'p1', `Paper 1 Mini-Set: ${p1}`, ['10 timed questions', 'Drip continues until exam week']),
+   431→    b(P4, 35, 'revision', 'GATE', 'la', gateTopic, gateSubs),
+   432→    b(P5, 30, 'drill', 'NET', 'mixed', 'Error-Log Patching', ['Re-solve today\u2019s concept-gap misses', 'Update the trap list']),
+   433→  ],
+   434→})
+   435→
+   436→// ── Week 8 ───────────────────────────────────────────────────────────────────
+   437→const W8: WeekSpec = {
+   438→  week: 8, phase: 2,
+   439→  title: 'NET PYQ Sets 1–4 (2023–2026 Papers) · GATE LA Maintenance',
+   440→  focus: 'NET 76% · GATE 24%',
+   441→  notes: [
+   442→    'PYQ sets are solved as papers, then unit-wise: coverage diagnosis, not just score.',
+   443→    'Official GATE plans rest this month too — 35 min of LA/flashcards keeps February alive.',
+   444→  ],
+   445→  milestone: '4 Paper 2 sets solved + reviewed same day · re-solve accuracy 70%+',
+   446→  days: [
+   447→    pyqDay('PYQ Set 1 — Paper 2 (100 Q, 120 min)', ['Use the 2026 paper first — closest to current pattern', 'Zero blanks: attempt everything', 'Flag >60s questions for pass 2'], 'GATE: LA Flashcards + Eigen Warm-ups', ['Eigen/SVD flashcard sweep', '10 eigenvalue warm-up problems'], 'Data Interpretation'),
+   448→    pyqDay('PYQ Set 2 — Paper 2 (100 Q, 120 min)', ['2025 paper', 'Same-day review is non-negotiable', 'Tag: concept / trap / misread / time'], 'GATE: LA Formula Sheet Cold-Write', ['Write the LA sheet from memory, 20 min', 'Correct & star gaps'], 'Reasoning'),
+   449→    pyqDay('PYQ Set 3 — Paper 2 (100 Q, 120 min)', ['2024 paper', 'Track time-per-question distribution', 'Watch for repeated trap patterns'], 'GATE: Quadratic Forms Drills', ['10 definiteness/quadratic-form problems', 'Leading minors vs eigenvalues trap'], 'Comprehension'),
+   450→    pyqDay('PYQ Set 4 — Paper 2 (100 Q, 120 min)', ['2023 paper', 'Compare scores against the 250+ budget ledger', 'Route every lost mark into the error log'], 'GATE: P&S Distribution Flashcards', ['Distribution family sweep', 'Memoryless & Poisson-scaling traps'], 'ICT'),
+   451→    { kind: 'weekday', blocks: [
+   452→      b(P1, 120, 'drill', 'NET', 'mixed', 'Error-Log Patching: Two Weakest Units', ['Unit-wise re-drill of flagged topics', 'Open notes allowed; build from errors']),
+   453→      b(P2, 60, 'review', 'NET', 'mixed', 'Topic Re-Drill Verification', ['Re-test: 15 questions on patched topics', 'Below 70%? The topic stays in the queue']),
+   454→      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Teaching Aptitude', ['10 timed questions', 'Concept-set recap continues']),
+   455→      b(P4, 35, 'drill', 'GATE', 'la', 'GATE: LA Mixed Mini-Set', ['15 mixed LA problems, timed', 'Anything slow → error log']),
+   456→      b(P5, 30, 'admin', 'NET', 'mixed', 'Week Review + Trap List Update', ['Top 10 recurring mistakes on one page', 'Trap list read before every mock from now on']),
+   457→    ]},
+   458→    { kind: 'saturday', blocks: [
+   459→      b(SA1, 90, 'practice', 'NET', 'mixed', 'Unit-Wise Re-Drill: Weakest 2 Units (open notes)', ['Untangle PYQ sets by topic, not by paper', 'Tag every question: known / shaky / unknown']),
+   460→      b(SA2, 60, 'revision', 'NET', 'p1', 'Paper 1 Full Set 1 — 50 Q (60 min, timed)', ['Full-length Paper 1 under the clock', 'Score against the 44/50 target']),
+
+[showing lines 121-460 of 607; use offset=461 with limit to continue reading]

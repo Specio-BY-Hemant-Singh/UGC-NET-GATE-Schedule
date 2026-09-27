@@ -34,3 +34,30 @@ model AppSetting {
   value     String
   updatedAt DateTime @updatedAt
 }
+
+// Personal mistake log — the core loop of both exam plans
+// category: concept | process | judgement | trap
+model ErrorEntry {
+  id        String   @id @default(cuid())
+  date      String   // ISO date the error was made/logged
+  week      Int      // plan week 1-19
+  subject   String   // SubjectId
+  category  String
+  note      String
+  resolved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Mock / sectional test scores with exam target tracking
+// exam: NET | GATE
+model MockScore {
+  id        String   @id @default(cuid())
+  label     String
+  exam      String
+  score     Float
+  max       Float
+  takenOn   String   // ISO date
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

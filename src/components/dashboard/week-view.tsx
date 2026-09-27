@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { KIND_LABEL, PHASES, SUBJECTS, type PlanWeek, type SubjectId, type SubjectMeta } from '@/lib/plan'
 import { COLOR_CLASSES } from '@/lib/plan-types'
 import { cn } from '@/lib/utils'
+import { motion } from 'framer-motion'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -187,14 +188,17 @@ export default function WeekView({
             </Button>
           </CardHeader>
           <CardContent className="space-y-2.5 pb-4">
-            {sel.blocks.map((blk) => {
+            {sel.blocks.map((blk, bi) => {
               const done = completions.has(blk.key)
               const KindIcon = KIND_ICON[blk.k]
               const subj = SUBJECTS[blk.sub as SubjectId] as SubjectMeta | undefined
               const subjColor = COLOR_MAP[blk.sub] ?? COLOR_MAP.mixed
               return (
-                <div
+                <motion.div
                   key={blk.key}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: Math.min(bi * 0.05, 0.3), duration: 0.28, ease: 'easeOut' }}
                   className={cn(
                     'flex gap-3 rounded-xl border border-stone-200/80 bg-card p-3 transition-all dark:border-stone-800',
                     done ? 'opacity-65' : 'hover:border-stone-300 hover:shadow-sm dark:hover:border-stone-700',
@@ -240,7 +244,7 @@ export default function WeekView({
                       </p>
                     )}
                   </div>
-                </div>
+                </motion.div>
               )
             })}
           </CardContent>

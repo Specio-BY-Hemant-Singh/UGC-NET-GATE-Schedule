@@ -17,10 +17,15 @@ import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import WeekView from './week-view'
 import HabitPanel from './habit-panel'
+import ErrorLogPanel from './error-log-panel'
+import MockLedger from './mock-ledger'
+import PatternIntelCard from './pattern-intel'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   BookOpen, CalendarCheck2, CheckCircle2, ChevronLeft, ChevronRight, Clock3, Crosshair,
   Flag, Flame, GraduationCap, ListChecks, Moon, PenLine, RotateCcw, Sun, Target, Timer,
 } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { useTheme } from 'next-themes'
 
 const MINUTES_BY_KEY: Map<string, number> = new Map(ALL_BLOCKS.map((b) => [b.key, b.m]))
@@ -315,40 +320,51 @@ export default function Dashboard() {
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-10 pt-5">
         {/* ── Stat cards ───────────────────────────────────────────────────── */}
         <section aria-label="Progress overview" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <StatCard icon={CheckCircle2} label="Overall Progress">
-            <div className="flex items-end gap-1.5">
-              <span className="text-2xl font-bold leading-none">{overallPct}%</span>
-              <span className="pb-0.5 text-[11px] text-muted-foreground">{completions.size}/{TOTAL_TASKS} blocks</span>
-            </div>
-            <Progress value={overallPct} className="mt-2 h-1.5" />
-          </StatCard>
-          <StatCard icon={Clock3} label="Hours Banked">
-            <div className="flex items-end gap-1.5">
-              <span className="text-2xl font-bold leading-none">{doneHours}h</span>
-              <span className="pb-0.5 text-[11px] text-muted-foreground">of ~{plannedHours}h planned</span>
-            </div>
-            <Progress value={plannedHours ? (doneMinutes / TOTAL_MINUTES) * 100 : 0} className="mt-2 h-1.5" />
-          </StatCard>
-          <StatCard icon={Flame} label="Habit Streak">
-            <div className="flex items-end gap-1.5">
-              <span className="text-2xl font-bold leading-none">{streak}</span>
-              <span className="pb-0.5 text-[11px] text-muted-foreground">day{streak === 1 ? '' : 's'} · 6 of 8 required</span>
-            </div>
-            <div className="mt-2 flex gap-1">
-              {Array.from({ length: 7 }).map((_, i) => {
-                const d = addDays(today, -(6 - i))
-                const ok = habitsDoneOn(d) >= HABITS.length - 2
-                return <span key={d} className={cn('h-1.5 flex-1 rounded-full', ok ? 'bg-emerald-500' : 'bg-stone-200 dark:bg-stone-800')} />
-              })}
-            </div>
-          </StatCard>
-          <StatCard icon={Target} label={`This Week · W${week}`}>
-            <div className="flex items-end gap-1.5">
-              <span className="text-2xl font-bold leading-none">{weekPct}%</span>
-              <span className="pb-0.5 text-[11px] text-muted-foreground">{weekDone}/{weekTotal} blocks</span>
-            </div>
-            <Progress value={weekPct} className="mt-2 h-1.5" />
-          </StatCard>
+          {([
+              <StatCard key="p" icon={CheckCircle2} label="Overall Progress">
+                <div className="flex items-end gap-1.5">
+                  <span className="text-2xl font-bold leading-none">{overallPct}%</span>
+                  <span className="pb-0.5 text-[11px] text-muted-foreground">{completions.size}/{TOTAL_TASKS} blocks</span>
+                </div>
+                <Progress value={overallPct} className="mt-2 h-1.5" />
+              </StatCard>,
+              <StatCard key="h" icon={Clock3} label="Hours Banked">
+                <div className="flex items-end gap-1.5">
+                  <span className="text-2xl font-bold leading-none">{doneHours}h</span>
+                  <span className="pb-0.5 text-[11px] text-muted-foreground">of ~{plannedHours}h planned</span>
+                </div>
+                <Progress value={plannedHours ? (doneMinutes / TOTAL_MINUTES) * 100 : 0} className="mt-2 h-1.5" />
+              </StatCard>,
+              <StatCard key="s" icon={Flame} label="Habit Streak">
+                <div className="flex items-end gap-1.5">
+                  <span className="text-2xl font-bold leading-none">{streak}</span>
+                  <span className="pb-0.5 text-[11px] text-muted-foreground">day{streak === 1 ? '' : 's'} · 6 of 8 required</span>
+                </div>
+                <div className="mt-2 flex gap-1">
+                  {Array.from({ length: 7 }).map((_, i) => {
+                    const d = addDays(today, -(6 - i))
+                    const ok = habitsDoneOn(d) >= HABITS.length - 2
+                    return <span key={d} className={cn('h-1.5 flex-1 rounded-full', ok ? 'bg-emerald-500' : 'bg-stone-200 dark:bg-stone-800')} />
+                  })}
+                </div>
+              </StatCard>,
+              <StatCard key="w" icon={Target} label={`This Week · W${week}`}>
+                <div className="flex items-end gap-1.5">
+                  <span className="text-2xl font-bold leading-none">{weekPct}%</span>
+                  <span className="pb-0.5 text-[11px] text-muted-foreground">{weekDone}/{weekTotal} blocks</span>
+                </div>
+                <Progress value={weekPct} className="mt-2 h-1.5" />
+              </StatCard>,
+          ] as React.ReactNode[]).map((card, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06, duration: 0.35, ease: 'easeOut' }}
+            >
+              {card}
+            </motion.div>
+          ))}
         </section>
 
         {/* ── Exam split ───────────────────────────────────────────────────── */}
@@ -371,10 +387,21 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
+        {/* ── Pattern intelligence (PYQ-calibrated) ────────────────────────── */}
+        <PatternIntelCard />
+
         {/* ── Week navigator ───────────────────────────────────────────────── */}
         <section aria-label="Week navigation" className="mt-5">
-          <div className="mb-2 flex items-center justify-between gap-2">
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
             <h2 className="text-sm font-semibold text-stone-700 dark:text-stone-300">Campaign Timeline · Week 1 → 19</h2>
+            <div className="hidden items-center gap-2.5 text-[10px] font-medium text-muted-foreground md:flex">
+              {(['Coverage', 'NET Peak', 'GATE Build', 'GATE Peak'] as const).map((label, i) => (
+                <span key={label} className="flex items-center gap-1">
+                  <span className={cn('size-1.5 rounded-full', ['bg-emerald-500', 'bg-teal-500', 'bg-amber-500', 'bg-orange-500'][i])} />
+                  {label}
+                </span>
+              ))}
+            </div>
             <div className="flex items-center gap-1.5">
               <Button variant="outline" size="sm" className="h-8 gap-1 rounded-lg" onClick={() => setWeek((w) => Math.max(1, w - 1))} disabled={week <= 1}>
                 <ChevronLeft className="size-3.5" /> Prev
@@ -452,6 +479,24 @@ export default function Dashboard() {
                 onToggle={toggleHabit}
                 streak={streak}
               />
+              <Card className="rounded-2xl border-stone-200/80 shadow-sm dark:border-stone-800">
+                <Tabs defaultValue="errors">
+                  <TabsList className="mx-4 mt-4 grid w-[calc(100%-2rem)] grid-cols-2 rounded-xl bg-stone-100 dark:bg-stone-800/70">
+                    <TabsTrigger value="errors" className="gap-1.5 rounded-lg text-xs font-semibold data-[state=active]:bg-white dark:data-[state=active]:bg-stone-900">
+                      <Crosshair className="size-3.5" /> Error Log
+                    </TabsTrigger>
+                    <TabsTrigger value="mocks" className="gap-1.5 rounded-lg text-xs font-semibold data-[state=active]:bg-white dark:data-[state=active]:bg-stone-900">
+                      <Flag className="size-3.5" /> Mock Ledger
+                    </TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="errors" className="mt-3">
+                    <ErrorLogPanel week={week} date={weekPlan.days[day]?.date ?? today} />
+                  </TabsContent>
+                  <TabsContent value="mocks" className="mt-3">
+                    <MockLedger />
+                  </TabsContent>
+                </Tabs>
+              </Card>
               {/* Subject progress */}
               <Card className="rounded-2xl border-stone-200/80 shadow-sm dark:border-stone-800">
                 <CardHeader className="pb-2 pt-4">
