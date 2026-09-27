@@ -8,6 +8,12 @@ A **19-week, evidence-calibrated preparation dashboard** for running **GATE 2027
 
 ---
 
+## 🌐 Live app
+
+**→ https://specio-by-hemant-singh.github.io/UGC-NET-GATE-Schedule/ ←**
+
+Open it on your phone or laptop and start ticking blocks. The GitHub Pages build runs fully client-side — progress, habits, error log and mock scores persist in **your browser's localStorage** (amber *local mode* indicator in the footer). Moving devices? Use the in-app **Export/Import JSON backup**. For server-side SQLite sync across devices, deploy the Railway/Docker way below — every push to `main` auto-redeploys Pages via the included GitHub Actions workflow.
+
 ## Why this exists
 
 Cramming two national-level exams together usually fails because of *decision fatigue*, not lack of effort. This dashboard removes the daily "what do I study now?" question:
@@ -52,8 +58,8 @@ Daily budget: **weekdays 4.75 h · Saturday ~5 h · Sunday 2.5 h** (exam days ex
 
 ```bash
 # 1. Clone + install
-git clone https://github.com/<you>/mission-dual.git
-cd mission-dual
+git clone https://github.com/Specio-BY-Hemant-Singh/UGC-NET-GATE-Schedule.git
+cd UGC-NET-GATE-Schedule
 bun install            # or: npm install
 
 # 2. Environment
@@ -85,7 +91,11 @@ The app ships with an **API + localStorage hybrid persistence layer** (`src/lib/
 - Host with a persistent disk → full server sync.
 - Serverless host (or offline) → everything still persists locally in the browser; the footer shows which mode is active.
 
-### Railway (recommended — persistent SQLite + API sync)
+### GitHub Pages (zero-config, already wired)
+
+Every push to `main` triggers `.github/workflows/deploy-pages.yml`: it builds a **static export** (`EXPORT_BUILD=1`, API routes excluded) and publishes it. Progress persists per-browser via localStorage — nothing to configure. Manual re-runs: repo **Actions → Deploy to GitHub Pages → Run workflow**.
+
+### Railway (server-side SQLite + cross-device sync)
 
 1. Push the repo to GitHub → **New Project → Deploy from GitHub** on [Railway](https://railway.app).
 2. Add a **Volume** and mount it at `/app/db`.

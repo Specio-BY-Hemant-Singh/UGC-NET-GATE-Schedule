@@ -1,0 +1,6 @@
+1:"$Sreact.fragment"
+2:I[97367,["/UGC-NET-GATE-Schedule/_next/static/chunks/77d2792b7dba5e63.js"],"ViewportBoundary"]
+3:I[97367,["/UGC-NET-GATE-Schedule/_next/static/chunks/77d2792b7dba5e63.js"],"MetadataBoundary"]
+4:"$Sreact.suspense"
+5:I[27201,["/UGC-NET-GATE-Schedule/_next/static/chunks/77d2792b7dba5e63.js"],"IconMark"]
+0:{"buildId":"p6IllS9XyFVDkasp_5z2R","rsc":["$","$1","h",{"children":[null,["$","$L2",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","div",null,{"hidden":true,"children":["$","$L3",null,{"children":["$","$4",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Mission Dual — GATE 2027 DA × UGC NET Dec 2026"}],["$","meta","1",{"name":"description","content":"19-week merged execution dashboard for GATE 2027 Data Science & AI (95+) and UGC NET December 2026 Computer Science (250+): daily topic-wise timetable, habit tracker and saved progress."}],["$","meta","2",{"name":"keywords","content":"GATE 2027 DA,UGC NET 2026,study planner,habit tracker,exam dashboard"}],["$","link","3",{"rel":"icon","href":"/logo.svg"}],["$","$L5","4",{}]]}]}]}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],"loading":null,"isPartial":false}
