@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
-  BookOpen, Crosshair, Flag, ListChecks, PenLine, RotateCcw, Target, Timer,
+  BookOpen, Crosshair, Flag, ListChecks, PenLine, Printer, RotateCcw, Target, Timer,
 } from 'lucide-react'
 import type { BlockKind, Exam } from '@/lib/plan'
 
@@ -166,7 +166,7 @@ export default function WeekView({
 
       {/* Day card */}
       {sel && (
-        <Card className={cn('rounded-2xl border shadow-sm', DAY_TONE[sel.kind])}>
+        <Card className={cn('print-day rounded-2xl border shadow-sm', DAY_TONE[sel.kind])}>
           <CardHeader className="flex flex-row flex-wrap items-center gap-2 pb-3 pt-4">
             <div className="min-w-0 flex-1">
               <CardTitle className="flex flex-wrap items-center gap-2 text-base">
@@ -187,6 +187,16 @@ export default function WeekView({
               onClick={() => onSetDay(sel.blocks.map((b) => b.key), !allDone)}
             >
               {allDone ? 'Reset day' : 'Complete day'}
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="size-8 rounded-lg"
+              title="Print this day plan"
+              aria-label="Print this day plan"
+              onClick={() => window.print()}
+            >
+              <Printer className="size-3.5" />
             </Button>
           </CardHeader>
           <CardContent className="space-y-2.5 pb-4">

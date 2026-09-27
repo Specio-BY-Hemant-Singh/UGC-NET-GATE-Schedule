@@ -14,6 +14,7 @@ export type StoreMode = 'api' | 'local'
 
 const LS = {
   completions: 'md:completions',
+  completionsAt: 'md:completionsAt',
   habits: 'md:habits',
   settings: 'md:settings',
   errors: 'md:errors',
@@ -68,11 +69,19 @@ export function localId(): string {
 // ── progress blocks ──────────────────────────────────────────────────────────
 export async function saveBlocks(items: { blockKey: string; completed: boolean }[]): Promise<void> {
   const cur = new Set(lsGet<string>(LS.completions, []))
+  const stamps = lsGet<Record<string, string>>(LS.completionsAt, {})
+  const now = new Date().toISOString()
   for (const it of items) {
-    if (it.completed) cur.add(it.blockKey)
-    else cur.delete(it.blockKey)
+    if (it.completed) {
+      cur.add(it.blockKey)
+      stamps[it.blockKey] = now // completion timestamp feeds the D1/D3/D7/D21 queue
+    } else {
+      cur.delete(it.blockKey)
+      delete stamps[it.blockKey]
+    }
   }
   lsSet(LS.completions, [...cur])
+  lsSet(LS.completionsAt, stamps)
   try {
     const res = await fetch('/api/progress', {
       method: 'POST',
@@ -128,6 +137,7 @@ export async function saveSetting(key: string, value: string): Promise<void> {
 // ── load everything (API first, offline-merged fallback) ────────────────────
 export interface LoadResult {
   completions: string[] // blockKeys
+  completionsAt: Record<string, string> // blockKey → completion ISO timestamp
   habits: string[] // "date|habitId"
   settings: Record<string, string>
 }
@@ -141,19 +151,31 @@ export async function loadAll(): Promise<LoadResult> {
     ])
     setMode('api')
     const apiC: string[] = (p.completions ?? []).map((x: { blockKey: string }) => x.blockKey)
+    const apiAt: Record<string, string> = {}
+    for (const x of (p.completions ?? []) as { blockKey: string; updatedAt?: string }[]) {
+      if (x.updatedAt) apiAt[x.blockKey] = x.updatedAt
+    }
     const apiH: string[] = (h.habits ?? []).map((x: { date: string; habitId: string }) => `${x.date}|${x.habitId}`)
     const apiS: Record<string, string> = s.settings ?? {}
     const localC = lsGet<string[]>(LS.completions, [])
+    const localAt = lsGet<Record<string, string>>(LS.completionsAt, {})
     const localH = lsGet<string[]>(LS.habits, [])
     const localS = lsGet<Record<string, string>>(LS.settings, {})
     // union-merge: offline additions survive; mirror is kept fresh on every
     // write so this equals the API state whenever the API stayed reachable.
+    // Timestamps: the newer of API vs local wins (ISO strings compare lexically).
+    const completionsAt: Record<string, string> = { ...apiAt }
+    for (const [k, v] of Object.entries(localAt)) {
+      if (!completionsAt[k] || v > completionsAt[k]) completionsAt[k] = v
+    }
     const merged: LoadResult = {
       completions: [...new Set([...apiC, ...localC])],
+      completionsAt,
       habits: [...new Set([...apiH, ...localH])],
       settings: { ...localS, ...apiS },
     }
     lsSet(LS.completions, merged.completions)
+    lsSet(LS.completionsAt, completionsAt)
     lsSet(LS.habits, merged.habits)
     lsSet(LS.settings, merged.settings)
     // push offline-only edits back to the API (fire and forget)
@@ -178,9 +200,97 @@ export async function loadAll(): Promise<LoadResult> {
     setMode('local')
     return {
       completions: lsGet<string[]>(LS.completions, []),
+      completionsAt: lsGet<Record<string, string>>(LS.completionsAt, {}),
       habits: lsGet<string[]>(LS.habits, []),
       settings: lsGet<Record<string, string>>(LS.settings, {}),
     }
+  }
+}
+
+// ── backup export / import (JSON) ────────────────────────────────────────────
+export interface BackupPayload {
+  app: 'mission-dual'
+  version: 1
+  exportedAt: string
+  completions: { blockKey: string; completedAt?: string }[]
+  habits: { date: string; habitId: string; done: boolean }[]
+  settings: Record<string, string>
+  errors: StoredError[]
+  mocks: StoredMock[]
+}
+
+export async function exportBackup(): Promise<BackupPayload> {
+  const base = await loadAll()
+  const [errors, mocks] = await Promise.all([loadErrors(), loadMocks()])
+  return {
+    app: 'mission-dual',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    completions: base.completions.map((blockKey) => ({ blockKey, completedAt: base.completionsAt[blockKey] })),
+    habits: base.habits.map((k) => {
+      const [date, habitId] = k.split('|')
+      return { date, habitId, done: true }
+    }),
+    settings: base.settings,
+    errors,
+    mocks,
+  }
+}
+
+function isBackupPayload(v: unknown): v is BackupPayload {
+  if (!v || typeof v !== 'object') return false
+  const o = v as Record<string, unknown>
+  return o.app === 'mission-dual' && o.version === 1 && Array.isArray(o.completions) && Array.isArray(o.habits)
+}
+
+/** Merge a backup into both mirrors and the API. Returns counts for the UI. */
+export async function importBackup(data: unknown): Promise<{ completions: number; habits: number; errors: number; mocks: number }> {
+  if (!isBackupPayload(data)) throw new Error('Not a valid Mission Dual backup file')
+
+  // 1. local mirrors — wholesale merge
+  const cSet = new Set(lsGet<string>(LS.completions, []))
+  const stamps = lsGet<Record<string, string>>(LS.completionsAt, {})
+  for (const c of data.completions) {
+    if (c.completed) cSet.add(c.blockKey)
+    if (typeof c.completedAt === 'string' && (!stamps[c.blockKey] || c.completedAt > stamps[c.blockKey])) {
+      stamps[c.blockKey] = c.completedAt
+    }
+  }
+  const hSet = new Set(lsGet<string>(LS.habits, []))
+  for (const hh of data.habits) {
+    if (hh.done) hSet.add(`${hh.date}|${hh.habitId}`)
+  }
+  const sMap = { ...lsGet<Record<string, string>>(LS.settings, {}), ...(data.settings ?? {}) }
+  const eList = [...lsGet<StoredError[]>(LS.errors, []), ...(data.errors ?? [])]
+  const mList = [...lsGet<StoredMock[]>(LS.mocks, []), ...(data.mocks ?? [])]
+  lsSet(LS.completions, [...cSet])
+  lsSet(LS.completionsAt, stamps)
+  lsSet(LS.habits, [...hSet])
+  lsSet(LS.settings, sMap)
+  lsSet(LS.errors, eList)
+  lsSet(LS.mocks, mList)
+
+  // 2. API — best effort bulk upserts (same shapes the app already posts)
+  const post = (url: string, body: unknown) =>
+    fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).catch(() => {})
+
+  const completionItems = data.completions.map((c) => ({ blockKey: c.blockKey, completed: c.completed ?? true }))
+  if (completionItems.length) await post('/api/progress', { items: completionItems })
+  if (data.habits.length) await post('/api/habits', { items: data.habits })
+  for (const [key, value] of Object.entries(data.settings ?? {})) {
+    if (typeof value === 'string') await post('/api/settings', { key, value })
+  }
+  for (const e of data.errors ?? []) {
+    await post('/api/errors', { date: e.date, week: e.week, subject: e.subject, category: e.category, note: e.note })
+  }
+  for (const m of data.mocks ?? []) {
+    await post('/api/mocks', { label: m.label, exam: m.exam, score: m.score, max: m.max, takenOn: m.takenOn })
+  }
+  return {
+    completions: completionItems.length,
+    habits: data.habits.length,
+    errors: (data.errors ?? []).length,
+    mocks: (data.mocks ?? []).length,
   }
 }
 

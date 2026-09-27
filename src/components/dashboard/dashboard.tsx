@@ -1,9 +1,9 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   ALL_BLOCKS, EXAM_STATS, HABITS, KIND_LABEL, NET_EXAM_ISO, GATE_EXAM_ISO, PHASES, SUBJECTS,
-  SUBJECT_STATS, TOTAL_MINUTES, TOTAL_TASKS, WEEKS, addDays, daysBetween, locateToday,
+  SUBJECT_STATS, TOTAL_MINUTES, TOTAL_TASKS, WEEKS, addDays, daysBetween, formatISO, locateToday,
   todayISO, type BlockKind, type Exam, type SubjectId,
 } from '@/lib/plan'
 import { COLOR_CLASSES } from '@/lib/plan-types'
@@ -21,14 +21,18 @@ import ErrorLogPanel from './error-log-panel'
 import MockLedger from './mock-ledger'
 import PatternIntelCard from './pattern-intel'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Input } from '@/components/ui/input'
+import SrQueue from './sr-queue'
 import {
   BookOpen, CalendarCheck2, CheckCircle2, ChevronLeft, ChevronRight, Clock3, Crosshair,
-  Flag, Flame, GraduationCap, ListChecks, Moon, PenLine, RotateCcw, Sun, Target, Timer,
+  Download, Flag, Flame, GraduationCap, ListChecks, Moon, PenLine, PencilLine, Repeat, RotateCcw, Sun, Target, Timer, Upload,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useTheme } from 'next-themes'
 import {
-  loadAll, onStoreModeChange, saveBlocks, saveHabits, saveSetting, getStoreMode, type StoreMode,
+  loadAll, onStoreModeChange, saveBlocks, saveHabits, saveSetting, getStoreMode,
+  exportBackup, importBackup, type StoreMode,
 } from '@/lib/store'
 
 const MINUTES_BY_KEY: Map<string, number> = new Map(ALL_BLOCKS.map((b) => [b.key, b.m]))
@@ -61,18 +65,87 @@ function useCountdown(iso: string): number {
   return useMemo(() => daysBetween(todayISO(), iso), [iso])
 }
 
-function ExamCountdown({ label, iso, tone }: { label: string; iso: string; tone: 'teal' | 'amber' }) {
+function ExamDateBadge({
+  label, iso, defaultISO, tone, onSet,
+}: {
+  label: string
+  iso: string
+  defaultISO: string
+  tone: 'teal' | 'amber'
+  onSet: (v: string) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const [draft, setDraft] = useState(iso)
   const days = useCountdown(iso)
+  const custom = iso !== defaultISO
   const chip =
     tone === 'teal'
       ? 'border-teal-300 bg-teal-50 text-teal-800 dark:border-teal-800 dark:bg-teal-950/60 dark:text-teal-300'
       : 'border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
   const dot = tone === 'teal' ? 'bg-teal-500' : 'bg-amber-500'
   return (
-    <Badge variant="outline" className={cn('gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold', chip)}>
-      <span className={cn('size-1.5 rounded-full', dot)} />
-      {label} · {days >= 0 ? `D-${days}` : 'done'}
-    </Badge>
+    <Popover
+      open={open}
+      onOpenChange={(o) => {
+        setOpen(o)
+        if (o) setDraft(iso)
+      }}
+    >
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          suppressHydrationWarning
+          title={`${label} exam date — click to adjust`}
+          className={cn(
+            'flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold outline-none transition-shadow focus-visible:ring-2 focus-visible:ring-stone-400 hover:shadow-sm',
+            chip,
+          )}
+        >
+          <span className={cn('size-1.5 rounded-full', dot)} />
+          {label} · <span className="tabular-nums">{days >= 0 ? `D-${days}` : 'done'}</span>
+          {custom && <PencilLine className="size-2.5 opacity-70" aria-label="custom date set" />}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-64 rounded-xl p-3">
+        <p className="text-xs font-semibold">{label} exam date</p>
+        <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground">
+          NTA has been sliding “Dec” cycles into early January — adjust here once the city intimation confirms. The
+          weekly grid itself stays put; the taper absorbs the drift.
+        </p>
+        <Input
+          type="date"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          className="mt-2 h-8 rounded-lg text-xs"
+          aria-label={`${label} exam date`}
+        />
+        <div className="mt-2 flex gap-1.5">
+          <Button
+            size="sm"
+            className="h-7 flex-1 rounded-lg bg-stone-900 text-xs hover:bg-stone-700 dark:bg-white dark:text-stone-900 dark:hover:bg-stone-200"
+            disabled={!/^\d{4}-\d{2}-\d{2}$/.test(draft) || draft === iso}
+            onClick={() => {
+              onSet(draft)
+              setOpen(false)
+            }}
+          >
+            Save
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 flex-1 rounded-lg text-xs"
+            disabled={!custom}
+            onClick={() => {
+              onSet('')
+              setOpen(false)
+            }}
+          >
+            Reset
+          </Button>
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }
 
@@ -111,12 +184,16 @@ function StatCard({
 export default function Dashboard() {
   const { toast } = useToast()
   const [completions, setCompletions] = useState<Set<string>>(new Set())
+  const [completionsAt, setCompletionsAt] = useState<Record<string, string>>({})
   const [habits, setHabits] = useState<Set<string>>(new Set())
   const [loaded, setLoaded] = useState(false)
   const [week, setWeek] = useState<number>(() => locateToday()?.week ?? 1)
   const [day, setDay] = useState<number>(() => locateToday()?.day ?? 0)
   const [syncedAt, setSyncedAt] = useState<Date | null>(null)
   const [storeMode, setStoreMode] = useState<StoreMode>(getStoreMode())
+  const [netDate, setNetDate] = useState<string>(NET_EXAM_ISO)
+  const [gateDate, setGateDate] = useState<string>(GATE_EXAM_ISO)
+  const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => onStoreModeChange(setStoreMode), [])
 
@@ -131,10 +208,13 @@ export default function Dashboard() {
         if (!alive) return
         setCompletions(new Set(res.completions))
         setHabits(new Set(res.habits))
+        setCompletionsAt(res.completionsAt ?? {})
         const lw = Number(res.settings.lastWeek)
         const ld = Number(res.settings.lastDay)
         if (lw >= 1 && lw <= 19) setWeek(lw)
         if (ld >= 0 && ld <= 6) setDay(ld)
+        if (/^\d{4}-\d{2}-\d{2}$/.test(res.settings.netExamDate ?? '')) setNetDate(res.settings.netExamDate)
+        if (/^\d{4}-\d{2}-\d{2}$/.test(res.settings.gateExamDate ?? '')) setGateDate(res.settings.gateExamDate)
         setSyncedAt(new Date())
         setLoaded(true)
       })
@@ -154,6 +234,20 @@ export default function Dashboard() {
     saveSetting('lastDay', String(day))
   }, [week, day, loaded])
 
+  const handleSetExamDate = useCallback(
+    (which: 'net' | 'gate', v: string) => {
+      const fallback = which === 'net' ? NET_EXAM_ISO : GATE_EXAM_ISO
+      const next = v || fallback
+      if (which === 'net') setNetDate(next)
+      else setGateDate(next)
+      saveSetting(which === 'net' ? 'netExamDate' : 'gateExamDate', next)
+      toast({
+        title: v ? `${which.toUpperCase()} exam date set to ${formatISO(next)}` : `${which.toUpperCase()} date reset to plan default`,
+      })
+    },
+    [toast],
+  )
+
   const toggleBlock = useCallback(
     (key: string, next: boolean) => {
       setCompletions((prev) => {
@@ -162,6 +256,12 @@ export default function Dashboard() {
         else s.delete(key)
         return s
       })
+      if (next) setCompletionsAt((prev) => ({ ...prev, [key]: new Date().toISOString() }))
+      else
+        setCompletionsAt((prev) => {
+          const { [key]: _drop, ...rest } = prev
+          return rest
+        })
       saveBlocks([{ blockKey: key, completed: next }])
         .then(() => setSyncedAt(new Date()))
         .catch(() => {
@@ -186,6 +286,15 @@ export default function Dashboard() {
           else s.delete(k)
         }
         return s
+      })
+      const now = new Date().toISOString()
+      setCompletionsAt((prev) => {
+        const nextMap = { ...prev }
+        for (const k of keys) {
+          if (next) nextMap[k] = now
+          else delete nextMap[k]
+        }
+        return nextMap
       })
       saveBlocks(keys.map((blockKey) => ({ blockKey, completed: next })))
         .then(() => setSyncedAt(new Date()))
@@ -277,6 +386,50 @@ export default function Dashboard() {
     }
   }
 
+  // ── backup export / import ───────────────────────────────────────────────
+  const onExport = useCallback(async () => {
+    try {
+      const data = await exportBackup()
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `mission-dual-backup-${today}.json`
+      a.click()
+      URL.revokeObjectURL(url)
+      toast({
+        title: 'Backup downloaded',
+        description: `${data.completions.length} blocks · ${data.habits.length} habits · ${data.errors.length} error rows · ${data.mocks.length} mocks.`,
+      })
+    } catch {
+      toast({ title: 'Export failed', variant: 'destructive' })
+    }
+  }, [today, toast])
+
+  const onImportFile = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      e.target.value = ''
+      if (!file) return
+      try {
+        const text = await file.text()
+        const res = await importBackup(JSON.parse(text))
+        toast({
+          title: 'Backup restored',
+          description: `${res.completions} blocks · ${res.habits} habits · ${res.errors} error rows · ${res.mocks} mocks merged. Reloading…`,
+        })
+        setTimeout(() => window.location.reload(), 900)
+      } catch (err) {
+        toast({
+          title: 'Import failed',
+          description: err instanceof Error ? err.message : 'Not a valid Mission Dual backup file',
+          variant: 'destructive',
+        })
+      }
+    },
+    [toast],
+  )
+
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-b from-stone-100 via-background to-background dark:from-stone-950 dark:via-background dark:to-background">
       {/* ── Header ─────────────────────────────────────────────────────────── */}
@@ -292,8 +445,8 @@ export default function Dashboard() {
             </p>
           </div>
           <div className="ml-auto flex items-center gap-2">
-            <ExamCountdown label="NET" iso={NET_EXAM_ISO} tone="teal" />
-            <ExamCountdown label="GATE" iso={GATE_EXAM_ISO} tone="amber" />
+            <ExamDateBadge label="NET" iso={netDate} defaultISO={NET_EXAM_ISO} tone="teal" onSet={(v) => handleSetExamDate('net', v)} />
+            <ExamDateBadge label="GATE" iso={gateDate} defaultISO={GATE_EXAM_ISO} tone="amber" onSet={(v) => handleSetExamDate('gate', v)} />
             <ThemeToggle />
           </div>
         </div>
@@ -305,21 +458,21 @@ export default function Dashboard() {
           {([
               <StatCard key="p" icon={CheckCircle2} label="Overall Progress">
                 <div className="flex items-end gap-1.5">
-                  <span className="text-2xl font-bold leading-none">{overallPct}%</span>
+                  <span className="text-2xl font-bold leading-none tabular-nums">{overallPct}%</span>
                   <span className="pb-0.5 text-[11px] text-muted-foreground">{completions.size}/{TOTAL_TASKS} blocks</span>
                 </div>
                 <Progress value={overallPct} className="mt-2 h-1.5" />
               </StatCard>,
               <StatCard key="h" icon={Clock3} label="Hours Banked">
                 <div className="flex items-end gap-1.5">
-                  <span className="text-2xl font-bold leading-none">{doneHours}h</span>
+                  <span className="text-2xl font-bold leading-none tabular-nums">{doneHours}h</span>
                   <span className="pb-0.5 text-[11px] text-muted-foreground">of ~{plannedHours}h planned</span>
                 </div>
                 <Progress value={plannedHours ? (doneMinutes / TOTAL_MINUTES) * 100 : 0} className="mt-2 h-1.5" />
               </StatCard>,
               <StatCard key="s" icon={Flame} label="Habit Streak">
                 <div className="flex items-end gap-1.5">
-                  <span className="text-2xl font-bold leading-none">{streak}</span>
+                  <span className="text-2xl font-bold leading-none tabular-nums">{streak}</span>
                   <span className="pb-0.5 text-[11px] text-muted-foreground">day{streak === 1 ? '' : 's'} · 6 of 8 required</span>
                 </div>
                 <div className="mt-2 flex gap-1">
@@ -332,7 +485,7 @@ export default function Dashboard() {
               </StatCard>,
               <StatCard key="w" icon={Target} label={`This Week · W${week}`}>
                 <div className="flex items-end gap-1.5">
-                  <span className="text-2xl font-bold leading-none">{weekPct}%</span>
+                  <span className="text-2xl font-bold leading-none tabular-nums">{weekPct}%</span>
                   <span className="pb-0.5 text-[11px] text-muted-foreground">{weekDone}/{weekTotal} blocks</span>
                 </div>
                 <Progress value={weekPct} className="mt-2 h-1.5" />
@@ -463,12 +616,15 @@ export default function Dashboard() {
               />
               <Card className="rounded-2xl border-stone-200/80 shadow-sm dark:border-stone-800">
                 <Tabs defaultValue="errors">
-                  <TabsList className="mx-4 mt-4 grid w-[calc(100%-2rem)] grid-cols-2 rounded-xl bg-stone-100 dark:bg-stone-800/70">
+                  <TabsList className="mx-4 mt-4 grid w-[calc(100%-2rem)] grid-cols-3 rounded-xl bg-stone-100 dark:bg-stone-800/70">
                     <TabsTrigger value="errors" className="gap-1.5 rounded-lg text-xs font-semibold data-[state=active]:bg-white dark:data-[state=active]:bg-stone-900">
                       <Crosshair className="size-3.5" /> Error Log
                     </TabsTrigger>
                     <TabsTrigger value="mocks" className="gap-1.5 rounded-lg text-xs font-semibold data-[state=active]:bg-white dark:data-[state=active]:bg-stone-900">
                       <Flag className="size-3.5" /> Mock Ledger
+                    </TabsTrigger>
+                    <TabsTrigger value="sr" className="gap-1.5 rounded-lg text-xs font-semibold data-[state=active]:bg-white dark:data-[state=active]:bg-stone-900">
+                      <Repeat className="size-3.5" /> SR Queue
                     </TabsTrigger>
                   </TabsList>
                   <TabsContent value="errors" className="mt-3">
@@ -476,6 +632,9 @@ export default function Dashboard() {
                   </TabsContent>
                   <TabsContent value="mocks" className="mt-3">
                     <MockLedger />
+                  </TabsContent>
+                  <TabsContent value="sr" className="mt-3">
+                    <SrQueue completions={completions} completionsAt={completionsAt} today={today} />
                   </TabsContent>
                 </Tabs>
               </Card>
@@ -512,13 +671,22 @@ export default function Dashboard() {
 
       {/* ── Sticky footer ──────────────────────────────────────────────────── */}
       <footer className="mt-auto border-t border-stone-200 bg-background dark:border-stone-800">
-        <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-4 text-[11px] text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-4 text-[11px] text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <p>19 weeks · ~{plannedHours} hrs · two syllabi, one calendar — merged from your four curated plans.</p>
-          <p className="flex items-center gap-1.5">
-            <span className={cn('inline-block size-1.5 rounded-full', storeMode === 'api' ? 'bg-emerald-500' : 'bg-amber-500')} />
-            {storeMode === 'api' ? 'Progress saved & synced' : 'Saved locally on this device'}
-            {syncedAt ? ` · ${storeMode === 'api' ? 'synced' : 'saved'} ${syncedAt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}` : ''}
-          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <input ref={fileRef} type="file" accept="application/json,.json" className="hidden" onChange={onImportFile} aria-hidden="true" tabIndex={-1} />
+            <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-lg px-2 text-[10px] font-semibold text-muted-foreground hover:text-foreground" onClick={onExport}>
+              <Download className="size-3" /> Backup
+            </Button>
+            <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-lg px-2 text-[10px] font-semibold text-muted-foreground hover:text-foreground" onClick={() => fileRef.current?.click()}>
+              <Upload className="size-3" /> Restore
+            </Button>
+            <p className="flex items-center gap-1.5">
+              <span className={cn('inline-block size-1.5 rounded-full', storeMode === 'api' ? 'bg-emerald-500' : 'bg-amber-500')} />
+              {storeMode === 'api' ? 'Progress saved & synced' : 'Saved locally on this device'}
+              {syncedAt ? ` · ${storeMode === 'api' ? 'synced' : 'saved'} ${syncedAt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}` : ''}
+            </p>
+          </div>
         </div>
       </footer>
     </div>
