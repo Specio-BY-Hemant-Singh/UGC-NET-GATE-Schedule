@@ -27,6 +27,9 @@ import {
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useTheme } from 'next-themes'
+import {
+  loadAll, onStoreModeChange, saveBlocks, saveHabits, saveSetting, getStoreMode, type StoreMode,
+} from '@/lib/store'
 
 const MINUTES_BY_KEY: Map<string, number> = new Map(ALL_BLOCKS.map((b) => [b.key, b.m]))
 
@@ -113,24 +116,23 @@ export default function Dashboard() {
   const [week, setWeek] = useState<number>(() => locateToday()?.week ?? 1)
   const [day, setDay] = useState<number>(() => locateToday()?.day ?? 0)
   const [syncedAt, setSyncedAt] = useState<Date | null>(null)
+  const [storeMode, setStoreMode] = useState<StoreMode>(getStoreMode())
+
+  useEffect(() => onStoreModeChange(setStoreMode), [])
 
   const today = todayISO()
   const located = locateToday()
 
-  // ── initial load ──────────────────────────────────────────────────────────
+  // ── initial load (API with automatic localStorage fallback) ──────
   useEffect(() => {
     let alive = true
-    Promise.all([
-      fetch('/api/progress').then((r) => r.json()),
-      fetch('/api/habits').then((r) => r.json()),
-      fetch('/api/settings').then((r) => r.json()),
-    ])
-      .then(([p, h, s]: [{ completions?: { blockKey: string }[] }, { habits?: { date: string; habitId: string }[] }, { settings?: Record<string, string> }]) => {
+    loadAll()
+      .then((res) => {
         if (!alive) return
-        setCompletions(new Set((p.completions ?? []).map((x) => x.blockKey)))
-        setHabits(new Set((h.habits ?? []).map((x) => `${x.date}|${x.habitId}`)))
-        const lw = Number(s.settings?.lastWeek)
-        const ld = Number(s.settings?.lastDay)
+        setCompletions(new Set(res.completions))
+        setHabits(new Set(res.habits))
+        const lw = Number(res.settings.lastWeek)
+        const ld = Number(res.settings.lastDay)
         if (lw >= 1 && lw <= 19) setWeek(lw)
         if (ld >= 0 && ld <= 6) setDay(ld)
         setSyncedAt(new Date())
@@ -138,7 +140,7 @@ export default function Dashboard() {
       })
       .catch(() => {
         if (alive) {
-          toast({ title: 'Could not load saved progress', description: 'Working offline — changes will not persist.', variant: 'destructive' })
+          toast({ title: 'Could not load saved progress', description: 'Starting with an empty tracker.', variant: 'destructive' })
           setLoaded(true)
         }
       })
@@ -148,16 +150,8 @@ export default function Dashboard() {
   // ── persist last location ────────────────────────────────────────────────
   useEffect(() => {
     if (!loaded) return
-    fetch('/api/settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: 'lastWeek', value: String(week) }),
-    }).catch(() => {})
-    fetch('/api/settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: 'lastDay', value: String(day) }),
-    }).catch(() => {})
+    saveSetting('lastWeek', String(week))
+    saveSetting('lastDay', String(day))
   }, [week, day, loaded])
 
   const toggleBlock = useCallback(
@@ -168,11 +162,7 @@ export default function Dashboard() {
         else s.delete(key)
         return s
       })
-      fetch('/api/progress', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ blockKey: key, completed: next }),
-      })
+      saveBlocks([{ blockKey: key, completed: next }])
         .then(() => setSyncedAt(new Date()))
         .catch(() => {
           setCompletions((prev) => {
@@ -197,11 +187,7 @@ export default function Dashboard() {
         }
         return s
       })
-      fetch('/api/progress', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: keys.map((blockKey) => ({ blockKey, completed: next })) }),
-      })
+      saveBlocks(keys.map((blockKey) => ({ blockKey, completed: next })))
         .then(() => setSyncedAt(new Date()))
         .catch(() => toast({ title: 'Save failed', variant: 'destructive' }))
     },
@@ -217,11 +203,7 @@ export default function Dashboard() {
         else s.delete(key)
         return s
       })
-      fetch('/api/habits', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date, habitId, done: next }),
-      })
+      saveHabits([{ date, habitId, done: next }])
         .then(() => setSyncedAt(new Date()))
         .catch(() => {
           setHabits((prev) => {
@@ -533,8 +515,9 @@ export default function Dashboard() {
         <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-4 text-[11px] text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <p>19 weeks · ~{plannedHours} hrs · two syllabi, one calendar — merged from your four curated plans.</p>
           <p className="flex items-center gap-1.5">
-            <span className="inline-block size-1.5 rounded-full bg-emerald-500" />
-            Progress saved automatically{syncedAt ? ` · synced ${syncedAt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}` : ''}
+            <span className={cn('inline-block size-1.5 rounded-full', storeMode === 'api' ? 'bg-emerald-500' : 'bg-amber-500')} />
+            {storeMode === 'api' ? 'Progress saved & synced' : 'Saved locally on this device'}
+            {syncedAt ? ` · ${storeMode === 'api' ? 'synced' : 'saved'} ${syncedAt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}` : ''}
           </p>
         </div>
       </footer>

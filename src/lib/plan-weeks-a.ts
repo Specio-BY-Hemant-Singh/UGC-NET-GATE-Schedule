@@ -96,14 +96,14 @@ const W1: WeekSpec = {
     { kind: 'weekday', blocks: [
       b(S1, 120, 'theory', 'NET', 'dsa', 'Complexity, Recurrences + Arrays & Linked Lists (U7)', ['Asymptotics O/Ω/Θ; master method; recursion-tree', 'Arrays, sparse matrices, singly/doubly linked lists', 'Counting function calls in recursion (26-Q39 archetype)']),
       b(S2, 70, 'drill', 'NET', 'dsa', 'Drill: Complexity + Recursion Tracing', ['15 questions: complexity + output tracing', 'Count total calls/stack activations for small recursions']),
-      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: ICT (U-VIII)', ['10 timed questions', 'Abbreviations, internet basics, digital initiatives']),
+      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: ICT (U-VIII)', ['10 timed questions', 'Abbreviations, internet basics, digital initiatives', 'Malware/virus/phishing taxonomy + cybercrime types (NET hot spot)']),
       b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: Probability Axioms, Conditional & Independence', ['Sample space, axioms; B⊂A conditional bounds (24-Sample-Q9)', 'Independent vs mutually exclusive (24-Q12 coins)', 'Tree diagrams before formulas — always']),
       nightCap(),
     ]},
     { kind: 'weekday', blocks: [
       b(S1, 120, 'theory', 'NET', 'dsa', 'Stacks, Queues + Sorting & Searching (U7)', ['Stacks, queues, deques, priority queues (24-Q32 deque trace)', 'Selection/bubble/insertion sort: comparison & swap counts (26-Q49)', 'Binary search: max comparisons, F(n)=F(⌊n/2⌋)+1 (26-Q31/24-Q40)']),
       b(S2, 70, 'drill', 'NET', 'dsa', 'Drill: Hand-Simulate Every Sort', ['Trace each sort on a 7-element array; count swaps = inversions', '15 MCQs on outputs, stability, pass counts']),
-      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Teaching Aptitude (U-I)', ['10 timed questions', 'Learner characteristics, teaching methods, evaluation systems']),
+      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Teaching Aptitude (U-I)', ['10 timed questions', 'Learner characteristics, teaching methods, evaluation systems', 'Bloom’s taxonomy: cognitive→affective→psychomotor mapping']),
       b(S4, 50, 'practice', 'GATE', 'ps', 'P&S: Counting Problem Set', ['25 counting problems, notes closed', 'Include 2 stars-and-bars + 1 inclusion-exclusion per set', 'Mark the slow ones for Saturday']),
       nightCap(),
     ]},
@@ -155,7 +155,7 @@ const W2: WeekSpec = {
     { kind: 'weekday', blocks: [
       b(S1, 120, 'theory', 'NET', 'dsa', 'Graphs II: Shortest Paths, MST + Stacks/Queues Reprise (U7)', ['Dijkstra/Bellman-Ford intuition; MST: Prim/Kruskal', 'Shortest-path non-edge reasoning (25-Q58 style)', 'Queue/stack pseudocode traces (25-Q64 flag-and-pop pattern)']),
       b(S2, 70, 'drill', 'NET', 'dsa', 'Drill: Graph Algorithm Hand-Runs', ['Run Dijkstra + Prim on one 6-node graph', 'Which edges CANNOT exist given shortest paths? ×5']),
-      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Research Aptitude (U-II)', ['10 timed questions', 'Research types, steps, ethics, ICT in research']),
+      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Research Aptitude (U-II)', ['10 timed questions', 'Research types, steps, ethics, ICT in research', 'Plagiarism & misconduct: definitions, similarity thresholds']),
       b(S4, 50, 'practice', 'GATE', 'ps', 'P&S: Bayes + RV Mixed Set (25 problems)', ['Closed book, timed', 'Mark the slow ones for Saturday']),
       nightCap(),
     ]},
@@ -243,7 +243,7 @@ const W4: WeekSpec = {
       nightCap(),
     ]},
     { kind: 'weekday', blocks: [
-      b(S1, 120, 'theory', 'NET', 'coa', 'COA: Digital Logic & Data Representation (U2)', ['Gates, K-maps, combinational: adders/decoders/MUX', 'Flip-flops, counters, registers; number systems & complements', 'IEEE-754 idea; error-detection codes; arithmetic algorithms']),
+      b(S1, 120, 'theory', 'NET', 'coa', 'COA: Digital Logic & Data Representation (U2)', ['Gates, K-maps, combinational: adders/decoders/MUX', 'Flip-flops, counters, registers; number systems & complements', 'Grey-code ↔ binary conversions (NET Dec 25 asked this)', 'IEEE-754 idea; error-detection codes; arithmetic algorithms']),
       b(S2, 70, 'drill', 'NET', 'coa', 'Drill: K-maps + Number Conversions', ['Simplify 3 four-variable K-maps', '15 MCQs: 1\u2019s/2\u2019s complement, range, overflow']),
       b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Reasoning (U-V)', ['10 timed questions', 'Number/letter series, codes, relationships']),
       b(S4, 50, 'theory', 'GATE', 'ps', 'P&S: Joint Distributions & Correlation', ['Joint pdf with triangular support; E[Y|X=x] (24-Q59)', 'Correlation of conditional-uniform construction (26-Q63)', 'Covariance of Bernoulli indicators (24-Q65)']),
@@ -311,7 +311,7 @@ const W5: WeekSpec = {
     { kind: 'weekday', blocks: [
       b(S1, 120, 'theory', 'NET', 'disc', 'Discrete: Group Theory + LP/PERT (U1)', ['Groups, subgroups, Lagrange; homomorphism/isomorphism', 'Rings, integral domains, fields — classify structures', 'PERT-CPM: critical path & slack by hand (NET favourite)']),
       b(S2, 70, 'drill', 'NET', 'disc', 'Drill: Algebra Structures + Critical Path', ['Classify 6 structures (group/ring/field)', 'One PERT network: ES/EF/LS/LF, critical path']),
-      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Higher Education (U-X)', ['10 timed questions', 'Ancient institutions, post-independence evolution, policies']),
+      b(S3, 25, 'practice', 'NET', 'p1', 'Paper 1 Mini-Set: Higher Education (U-X)', ['10 timed questions', 'Ancient institutions, post-independence evolution, policies', 'NEP 2020: school+higher-ed structure, key bodies & commissions']),
       b(S4, 50, 'drill', 'GATE', 'ps', 'P&S: Inference Mixed Timed Set', ['20 Q, 35 min: CLT/tests/estimation mixed', 'Every miss → error log with root cause']),
       nightCap(),
     ]},
@@ -422,9 +422,9 @@ const W7: WeekSpec = {
     ]},
     { kind: 'saturday', blocks: [
       b('09:00 – 11:00', 120, 'test', 'NET', 'mixed', 'NET BASELINE MOCK 0 — Paper 2, 100 Q (120 min)', ['Full pattern, timed, morning start', 'Record the score — Phase 2 reference point', 'Answer all 100: zero-blank doctrine from mock 1']),
-      b('11:15 – 12:45', 90, 'review', 'NET', 'mixed', 'Mock Autopsy', ['Score split by unit; tag every error: known / shaky / unknown', 'Guess-quality audit; time audit: where did 120 minutes go?']),
-      b(SA3, 75, 'admin', 'BOTH', 'mixed', 'Gap List + Phase 2 Patch Plan', ['Three weakest units named', 'Each gets a dated repair slot in Weeks 8–9']),
-      b(SA4, 60, 'revision', 'GATE', 'la', 'GATE LA Formula-Sheet Pass', ['Eigen/SVD/projection sheet written from memory', 'Correct against notes; star gaps']),
+      b('11:15 – 12:30', 75, 'review', 'NET', 'mixed', 'Mock Autopsy', ['Score split by unit; tag every error: known / shaky / unknown', 'Guess-quality audit; time audit: where did 120 minutes go?']),
+      b('12:40 – 13:40', 60, 'admin', 'BOTH', 'mixed', 'Gap List + Phase 2 Patch Plan', ['Three weakest units named', 'Each gets a dated repair slot in Weeks 8–9']),
+      b('15:00 – 15:45', 45, 'revision', 'GATE', 'la', 'GATE LA Formula-Sheet Pass', ['Eigen/SVD/projection sheet written from memory', 'Correct against notes; star gaps']),
     ]},
     sunday('Plan Phase 2: mock cadence, PYQ set order, Paper 1 full sets'),
   ],
@@ -503,8 +503,7 @@ const W9: WeekSpec = {
     { kind: 'saturday', blocks: [
       b('09:00 – 12:00', 180, 'test', 'NET', 'mixed', 'COMBINED MOCK A — Paper 1 (50 Q) + Paper 2 (100 Q), 180 min', ['Full session rehearsal at shift timing (9:00 AM)', 'P1 in ≤50 min, then P2 in three passes', 'Zero-blank audit in the final 8 minutes']),
       b('12:20 – 13:50', 90, 'review', 'NET', 'mixed', 'Three-Layer Autopsy', ['Score anatomy vs the 250+ budget line by line', 'Error taxonomy: concept / calculation / misread / time / guess', 'Time audit: reconstruct where 180 minutes went']),
-      b(SA3, 75, 'revision', 'NET', 'mixed', 'Fact-Sheet Sweep: Units 1–5', ['Read-aloud sweep, fact sheets 1–5', 'Star anything that hesitated']),
-      b(SA4, 60, 'admin', 'BOTH', 'mixed', 'Repair Queue + GATE Check-In', ['Weak-unit accuracy re-tested; below 70% → queue with deadline', 'GATE LA trend note — one honest sentence']),
+      b('20:45 – 21:15', 30, 'admin', 'BOTH', 'mixed', 'Repair Queue + GATE Check-In + Fact Sweep', ['Weak-unit accuracy re-tested; below 70% → queue with deadline', 'Fact-sheet read-aloud sweep, sheets 1–5, star hesitations', 'GATE LA trend note — one honest sentence']),
     ]},
     { kind: 'sunday', blocks: [
       b(SU1, 60, 'admin', 'NET', 'mixed', 'Error-Log Triage + 72h Re-solves', ['All entries from the week re-attempted cold', 'Repeat offenders starred for exam-morning reading']),
@@ -553,9 +552,9 @@ const W10: WeekSpec = {
       b('20:45 – 21:15', 30, 'revision', 'NET', 'mixed', 'Nightly Fact Sweep', ['2 fact sheets + trap list']),
     ]},
     { kind: 'saturday', blocks: [
-      b(SA1, 120, 'drill', 'NET', 'mixed', 'Mock 3 Follow-Up + Fact Sheet 5', ['Cold re-solves + routed repairs', 'Fact sheet 5 finalised', 'Weakest-unit patch from error log']),
-      b(SA2, 60, 'revision', 'NET', 'p1', 'Paper 1 Formula & Scheme Cards', ['DI/reasoning formula cards', 'Higher-ed + environment timeline sheets refreshed']),
-      b(SA3, 75, 'drill', 'NET', 'mixed', 'Weak-Unit Patch Block', ['Repair-cycle day: re-derive, re-drill, re-test', 'Exit: 10-question mini-set ≥ 7 correct']),
+      b('09:00 – 11:00', 120, 'drill', 'NET', 'mixed', 'Mock 3 Follow-Up + Fact Sheet 5', ['Cold re-solves + routed repairs', 'Fact sheet 5 finalised', 'Weakest-unit patch from error log']),
+      b('11:15 – 12:15', 60, 'revision', 'NET', 'p1', 'Paper 1 Formula & Scheme Cards', ['DI/reasoning formula cards', 'Higher-ed + environment timeline sheets refreshed']),
+      b('12:30 – 13:30', 60, 'drill', 'NET', 'mixed', 'Weak-Unit Patch Block', ['Repair-cycle day: re-derive, re-drill, re-test', 'Exit: 10-question mini-set ≥ 7 correct']),
       b(SA4, 60, 'admin', 'BOTH', 'mixed', 'Week Audit', ['Mock trend: 1→2→3 recorded', 'GATE maintenance check: streak intact?']),
     ]},
     sunday('Plan Week 11: Mocks 4–5, taper protocol, exam-day logistics'),

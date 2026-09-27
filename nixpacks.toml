@@ -1,0 +1,15 @@
+# nixpacks.toml — Railway / Nixpacks build definition
+# Ensures the Prisma client is generated and the SQLite schema exists.
+
+[phases.setup]
+nixPkgs = ["bun"]
+
+[phases.install]
+cmds = ["bun install"]
+
+[phases.build]
+cmds = ["bunx prisma generate", "bun run build"]
+
+[start]
+# prisma db push creates the SQLite file/schema on the mounted volume (idempotent)
+cmd = "mkdir -p db && bunx prisma db push --accept-data-loss && bun run start"

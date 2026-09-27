@@ -2,13 +2,14 @@
 
 import { useState } from 'react'
 import {
-  GATE_ANATOMY, GATE_ARCHETYPES, GATE_META, GATE_SECTION_WEIGHTS, NET_META,
+  GATE_ANATOMY, GATE_ARCHETYPES, GATE_META, GATE_SECTION_WEIGHTS,
+  NET_ARCHETYPES, NET_META, NET_UNIT_WEIGHTS,
 } from '@/lib/pyq-intel'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { BarChart3, ChevronDown, GraduationCap, Lightbulb, Network } from 'lucide-react'
+import { BarChart3, ChevronDown, GraduationCap, Lightbulb, Network, TriangleAlert } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 type Tab = 'gate' | 'net'
@@ -32,7 +33,7 @@ export default function PatternIntelCard() {
             <div>
               <p className="text-sm font-semibold">Pattern Intelligence</p>
               <p className="text-[11px] text-muted-foreground">
-                Calibrated from real GATE DA 2024–26 papers + both NET syllabi
+                Calibrated from real GATE DA 2024–26 papers + real NET Dec 2025 / June 2025 shifts
               </p>
             </div>
           </div>
@@ -146,9 +147,17 @@ export default function PatternIntelCard() {
                   </div>
                 ) : (
                   <div className="space-y-4">
+                    {/* NET paper facts */}
                     <div className="rounded-xl border border-stone-200/80 p-3 dark:border-stone-800">
-                      <p className="text-xs font-bold">Paper 2 · Computer Science &amp; Applications</p>
+                      <p className="text-xs font-bold">Paper 2 · Computer Science &amp; Applications (code 87)</p>
                       <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{NET_META.p2}</p>
+                      <p className="mt-1.5 text-xs font-bold">Paper 1 · General (Teaching &amp; Research Aptitude)</p>
+                      <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{NET_META.p1}</p>
+                      <div className="mt-2 grid gap-1 text-[11px] leading-relaxed text-muted-foreground">
+                        <p><span className="font-semibold text-foreground">Mode:</span> {NET_META.mode}</p>
+                        <p><span className="font-semibold text-foreground">Attempts:</span> {NET_META.attempts}</p>
+                        <p><span className="font-semibold text-foreground">Difficulty:</span> {NET_META.difficulty}</p>
+                      </div>
                       <div className="mt-2 flex flex-wrap gap-1">
                         {NET_META.units.map((u) => (
                           <Badge key={u} variant="outline" className="rounded-full text-[10px] font-medium">
@@ -157,28 +166,57 @@ export default function PatternIntelCard() {
                         ))}
                       </div>
                     </div>
-                    <div className="rounded-xl border border-stone-200/80 p-3 dark:border-stone-800">
-                      <p className="text-xs font-bold">Paper 1 · General (Teaching &amp; Research Aptitude)</p>
-                      <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{NET_META.p1}</p>
-                      <div className="mt-2 flex flex-wrap gap-1">
-                        {NET_META.p1Units.map((u) => (
-                          <Badge key={u} variant="outline" className="rounded-full text-[10px] font-medium">
-                            {u}
-                          </Badge>
+
+                    {/* NET unit weights (real Dec 2025) */}
+                    <div>
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Unit weights &amp; attempts · real Dec 2025 paper
+                      </p>
+                      <div className="space-y-1.5">
+                        {NET_UNIT_WEIGHTS.map((s) => (
+                          <div key={s.id} className="flex items-center gap-2">
+                            <span className={cn('h-2 w-2 shrink-0 rounded-full', s.color)} />
+                            <span className="w-40 shrink-0 truncate text-xs font-medium" title={s.note}>{s.unit}</span>
+                            <div className="h-2 flex-1 overflow-hidden rounded-full bg-stone-200 dark:bg-stone-800">
+                              <div className={cn('h-full rounded-full', s.color)} style={{ width: s.tier === 'High' ? '100%' : s.tier === 'Medium' ? '66%' : '40%' }} />
+                            </div>
+                            <span className="w-28 shrink-0 text-right text-[11px] font-semibold text-muted-foreground">
+                              {s.tier} · {s.questions}
+                            </span>
+                          </div>
                         ))}
                       </div>
                     </div>
-                    <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 dark:border-amber-900/60 dark:bg-amber-950/30">
-                      <p className="text-xs font-bold text-amber-800 dark:text-amber-300">Paper-1 hotspots</p>
-                      <ul className="mt-1 space-y-1">
-                        {NET_META.p1Hotspots.map((h) => (
-                          <li key={h} className="flex gap-1.5 text-[11px] leading-relaxed text-amber-800/90 dark:text-amber-200/80">
-                            <span className="mt-[5px] size-1 shrink-0 rounded-full bg-amber-500" />
-                            {h}
-                          </li>
+
+                    {/* NET archetypes */}
+                    <div>
+                      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        <Lightbulb className="size-3.5 text-amber-500" /> Observed archetypes ({NET_META.papers})
+                      </p>
+                      <div className="max-h-64 space-y-2.5 overflow-y-auto pr-2 [scrollbar-width:thin]">
+                        {NET_ARCHETYPES.map((a) => (
+                          <div key={a.section} className="rounded-xl border border-stone-200/80 p-2.5 dark:border-stone-800">
+                            <p className="mb-1 text-[11px] font-bold">{a.section}</p>
+                            <ul className="space-y-0.5">
+                              {a.items.map((it) => (
+                                <li key={it} className="flex gap-1.5 text-[11px] leading-relaxed text-muted-foreground">
+                                  <span className="mt-[5px] size-1 shrink-0 rounded-full bg-stone-400" />
+                                  {it}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
                         ))}
-                      </ul>
-                      <p className="mt-2 text-[10px] text-amber-700/70 dark:text-amber-300/60">{NET_META.papers}</p>
+                      </div>
+                    </div>
+
+                    {/* Scheduling watch */}
+                    <div className="rounded-xl border border-orange-200 bg-orange-50 p-3 dark:border-orange-900/60 dark:bg-orange-950/30">
+                      <p className="flex items-center gap-1.5 text-xs font-bold text-orange-800 dark:text-orange-300">
+                        <TriangleAlert className="size-3.5" /> Exam-window watch
+                      </p>
+                      <p className="mt-1 text-[11px] leading-relaxed text-orange-800/90 dark:text-orange-200/80">{NET_META.window}</p>
+                      <p className="mt-2 text-[10px] text-orange-700/70 dark:text-orange-300/60">{NET_META.papers}</p>
                     </div>
                   </div>
                 )}

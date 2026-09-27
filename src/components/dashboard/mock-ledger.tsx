@@ -8,6 +8,9 @@ import { Input } from '@/components/ui/input'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Crosshair, Flag, Plus, Trash2, TrendingUp } from 'lucide-react'
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import {
+  loadMocks, createMockRemote, deleteMockRemote, localId, type StoredMock,
+} from '@/lib/store'
 
 interface MockScore {
   id: string
@@ -37,13 +40,14 @@ export default function MockLedger() {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    fetch('/api/mocks')
-      .then((r) => r.json())
-      .then((j: { mocks?: MockScore[] }) => {
-        setMocks(j.mocks ?? [])
+    let alive = true
+    loadMocks().then((rows) => {
+      if (alive) {
+        setMocks(rows as MockScore[])
         setLoaded(true)
-      })
-      .catch(() => setLoaded(true))
+      }
+    })
+    return () => { alive = false }
   }, [])
 
   const addMock = useCallback(async () => {
@@ -52,26 +56,23 @@ export default function MockLedger() {
     if (!label.trim() || !Number.isFinite(s) || !Number.isFinite(m) || m <= 0 || s < 0 || s > m || saving) return
     setSaving(true)
     try {
-      const res = await fetch('/api/mocks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ label, exam, score: s, max: m, takenOn }),
-      })
-      const j: { mock?: MockScore } = await res.json()
-      if (j.mock) {
-        setMocks((prev) => [...prev, j.mock as MockScore])
-        setLabel('')
-        setScore('')
-        setMax('')
-      }
+      const fallbackId = localId()
+      const { id } = await createMockRemote({ label, exam, score: s, max: m, takenOn }, fallbackId)
+      setMocks((prev) => [...prev, { id, label, exam, score: s, max: m, takenOn }])
+      setLabel('')
+      setScore('')
+      setMax('')
     } finally {
       setSaving(false)
     }
   }, [label, exam, score, max, takenOn, saving])
 
   const removeMock = useCallback(async (id: string) => {
-    setMocks((prev) => prev.filter((m) => m.id !== id))
-    await fetch(`/api/mocks?id=${encodeURIComponent(id)}`, { method: 'DELETE' }).catch(() => {})
+    setMocks((prev) => {
+      const next = prev.filter((m) => m.id !== id)
+      deleteMockRemote(id, next as StoredMock[])
+      return next
+    })
   }, [])
 
   const pct = (m: MockScore) => (m.max ? (m.score / m.max) * 100 : 0)

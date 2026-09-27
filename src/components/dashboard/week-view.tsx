@@ -42,6 +42,7 @@ const DAY_TONE: Record<string, string> = {
   weekday: 'border-stone-200 bg-card dark:border-stone-800',
   saturday: 'border-emerald-200 bg-emerald-50/60 dark:border-emerald-900 dark:bg-emerald-950/20',
   sunday: 'border-stone-200 bg-stone-50 dark:border-stone-800 dark:bg-stone-900/40',
+  mock: 'border-amber-300 bg-amber-50/70 dark:border-amber-900 dark:bg-amber-950/25',
   exam: 'border-rose-300 bg-rose-50 dark:border-rose-900 dark:bg-rose-950/30',
 }
 
@@ -49,6 +50,7 @@ const DAY_LABEL: Record<string, string> = {
   weekday: 'Weekday grid · 4.75 h',
   saturday: 'Saturday · consolidation',
   sunday: 'Sunday · light maintenance',
+  mock: 'MOCK DAY · full-length rehearsal',
   exam: 'EXAM DAY',
 }
 

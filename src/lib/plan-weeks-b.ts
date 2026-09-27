@@ -52,13 +52,13 @@ const sunday = (planFor: string): DaySpec => ({
   ],
 })
 
-// mock-day template (5.0 h)
+// mock-day template (5.0 h — exam setup + full mock + review + patch)
 const mockDay = (label: string, purpose: string, reviewFocus: string): DaySpec => ({
-  kind: 'saturday' as const,
+  kind: 'mock' as const,
   blocks: [
     b('09:15 – 09:30', 15, 'admin', 'GATE', 'mixed', 'Exam Setup Ritual', ['Sit down as if at the centre: admit card, rough sheets, no phone']),
     b('09:30 – 12:30', 180, 'test', 'GATE', 'mixed', label, [purpose, 'Full length under strict exam conditions, fixed breaks']),
-    b('14:00 – 15:30', 90, 'review', 'GATE', 'mixed', 'Mock Review: Score + Categorise Every Error', [reviewFocus, 'Categorise: concept / silly / guess; time per section noted']),
+    b('14:00 – 15:15', 75, 'review', 'GATE', 'mixed', 'Mock Review: Score + Categorise Every Error', [reviewFocus, 'Categorise: concept / silly / guess; time per section noted']),
     b('20:45 – 21:15', 30, 'drill', 'GATE', 'mixed', 'Patch the Weakest Concept Exposed', ['Update error log with mock lessons', 'One rule to your future self — max 5 rules per mock']),
   ],
 })
@@ -245,8 +245,8 @@ const W15: WeekSpec = {
     { kind: 'saturday', blocks: [
       b('09:00 – 11:30', 150, 'test', 'GATE', 'mixed', 'CONSOLIDATION TEST — 50 Q, Full Syllabus (150 min)', ['Self-made from the week\u2019s material + older topics', 'Phase 3 exit gate — target 38/50']),
       b('11:45 – 13:00', 75, 'review', 'GATE', 'mixed', 'Review + Gap List for Phase 4', ['Every error categorised', 'Top 3 gaps get W16 sectional priority']),
-      b(SA3, 75, 'practice', 'GATE', 'mixed', 'Patch the Largest Gap', ['Re-derive + 5 fresh problems']),
-      b(SA4, 60, 'admin', 'GATE', 'mixed', 'Phase-4 Planning + Sheets Freeze', ['Mock calendar staged (M1–M6)', 'Formula sheets frozen at v1']),
+      b('15:00 – 15:45', 45, 'practice', 'GATE', 'mixed', 'Patch the Largest Gap', ['Re-derive + 5 fresh problems']),
+      b('15:50 – 16:20', 30, 'admin', 'GATE', 'mixed', 'Phase-4 Planning + Sheets Freeze', ['Mock calendar staged (M1–M6)', 'Formula sheets frozen at v1']),
     ]},
     sunday('Plan Phase 4: sectional order, mock-day template, marks-budget targets'),
   ],
@@ -374,7 +374,7 @@ const W18: WeekSpec = {
     { kind: 'saturday', blocks: [
       b('09:15 – 09:30', 15, 'admin', 'GATE', 'mixed', 'Exam Setup Ritual', ['As if at the centre']),
       b('09:30 – 12:30', 180, 'test', 'GATE', 'mixed', 'MOCK 6 — FULL DRESS REHEARSAL AT PEAK (9:30 AM)', ['Full exam-identical conditions', 'Final strategy freeze after this — no new tactics']),
-      b('14:00 – 15:30', 90, 'review', 'GATE', 'mixed', 'Mock 6 Review + Strategy Freeze', ['Five final rules to your future self', 'Attempt sequence locked']),
+      b('14:00 – 15:15', 75, 'review', 'GATE', 'mixed', 'Mock 6 Review + Strategy Freeze', ['Five final rules to your future self', 'Attempt sequence locked']),
       b('20:45 – 21:15', 30, 'admin', 'GATE', 'mixed', 'Physical Revision Pack Prep', ['12-page formula set + error log (starred) + 6 score cards + 1-page attempt-strategy rules']),
     ]},
     sunday('Plan Week 19: revision grid + exam-day playbook'),

@@ -115,10 +115,18 @@ export const GATE_ARCHETYPES: Archetype[] = [
   },
 ]
 
+// ── UGC NET — calibrated from the real Dec 2025 cycle (exam: 2 Jan 2026,
+//    shift 1) unit-wise analysis, June 2025 shift feedback, and the official
+//    paper archive (ugcnetonline.in, Subject 87 — Computer Science & Applic.)
+
 export const NET_META = {
-  p2: 'Paper 2 (CS): 100 Q × 2 marks = 200 · ~10 questions per unit, all 10 units compulsory',
-  p1: 'Paper 1 (General): 50 Q × 2 marks = 100 · 10 units × 5 questions',
-  papers: 'Previous papers: ugcnetonline.in → Previous Question Papers',
+  p2: 'Paper 2 (CS, code 87): 100 Q × 2 = 200 marks · all 10 units compulsory · +2 per correct, NO negative marking',
+  p1: 'Paper 1 (General): 50 Q × 2 = 100 marks · 10 units × ~5 questions · no negative marking',
+  mode: 'CBT · both papers in ONE 3-hour session (180 min, no breaks) · shifts 9 AM–12 PM / 3–6 PM',
+  attempts: 'Good attempts (Dec 2025 real): Paper 1 → 40–45 of 50 · Paper 2 → 55–65 of 100 · zero-blank doctrine is mathematically optimal (no negative marking)',
+  difficulty: 'Dec 2025: Paper 1 easy–moderate · Paper 2 moderate–difficult, a few lengthy multi-concept questions',
+  papers: 'Dec 2025 cycle (exam 2 Jan 2026) + June 2025 shifts + official archive: ugcnetonline.in → Previous Question Papers (Subject 87)',
+  window: 'Scheduling watch: the “Dec 2025” cycle actually ran 31 Dec 2025 – 7 Jan 2026 (CS on 2 Jan). The Dec 2026 NET can plausibly land mid-Dec 2026 to early Jan 2027 — the plan anchors 13 Dec 2026 and the taper can stretch if NTA announces a later date.',
   units: [
     'U1 Discrete Structures & Optimization',
     'U2 Computer System Architecture',
@@ -136,9 +144,89 @@ export const NET_META = {
     'Math Reasoning', 'Logical Reasoning (incl. Indian Logic)', 'Data Interpretation',
     'ICT', 'People, Development & Environment', 'Higher Education System',
   ],
-  p1Hotspots: [
-    'Indian Logic / Pramanas returns in Logical Reasoning every cycle',
-    'Environment: EP Act 1986, NAPCC, Montreal/Kyoto/Paris, ISA — one question most years',
-    'DI is formula-light but trap-heavy: read units and totals first',
-  ],
 }
+
+export interface NetUnitWeight {
+  id: string
+  unit: string
+  tier: 'High' | 'Medium' | 'Low'
+  questions: string // Dec 2025 observed range (units grouped by shifts)
+  difficulty: string
+  color: string
+  note: string
+}
+
+// Dec 2025 real exam unit distribution + NTA weightage commentary
+export const NET_UNIT_WEIGHTS: NetUnitWeight[] = [
+  { id: 'u7', unit: 'U7 DSA & Algorithms', tier: 'High', questions: '6–7 Q', difficulty: 'Easy–Mod', color: 'bg-teal-500', note: 'Sorting (Quick/Merge), searching, graphs, trees, DP, greedy — core problem-solving theme' },
+  { id: 'u4', unit: 'U4 DBMS', tier: 'High', questions: '6–7 Q', difficulty: 'Moderate', color: 'bg-emerald-500', note: 'SQL queries, normalisation, transactions/serializability, indexing — repeated & scoring' },
+  { id: 'u5', unit: 'U5 OS & System SW', tier: 'High', questions: '5–6 Q', difficulty: 'Easy–Mod', color: 'bg-green-500', note: 'CPU/disk scheduling, deadlocks, memory mgmt, processes & threads — heavy recently' },
+  { id: 'u9', unit: 'U9 Networks', tier: 'High', questions: '~8–10 Q', difficulty: 'Moderate', color: 'bg-fuchsia-500', note: 'OSI/TCP-IP, routing, congestion control, IP addressing, security — consistent' },
+  { id: 'u1', unit: 'U1 Discrete & Opt.', tier: 'Medium', questions: '6–7 Q', difficulty: 'Moderate', color: 'bg-lime-500', note: 'Recurrence relations, logic formula matching, sets/combinatorics/graph theory' },
+  { id: 'u2', unit: 'U2 Comp. Architecture', tier: 'Medium', questions: '7–8 Q', difficulty: 'Moderate', color: 'bg-orange-500', note: 'Digital logic (Grey code seen!), pipelining, memory hierarchy, I/O' },
+  { id: 'u3', unit: 'U3 Prog. Lang & Graphics', tier: 'Medium', questions: '7–8 Q', difficulty: 'Easy–Mod', color: 'bg-pink-500', note: 'Projections, programming paradigms, AI-agent basics — easy marks, don\u2019t skip' },
+  { id: 'u8', unit: 'U8 TOC & Compilers', tier: 'Medium', questions: '4–5 Q', difficulty: 'Moderate', color: 'bg-violet-500', note: 'DFA↔NFA conversion, grammars, bottom-up parsing, Turing machines, decidability' },
+  { id: 'u6', unit: 'U6 Software Engg', tier: 'Low', questions: '5–6 Q', difficulty: 'Moderate', color: 'bg-rose-500', note: 'SDLC models, COCOMO, testing strategies/chronology, quality metrics — direct questions' },
+  { id: 'u10', unit: 'U10 AI (NET scope)', tier: 'Low', questions: '~8–10 Q', difficulty: 'Easy–Mod', color: 'bg-cyan-500', note: 'Search, KR, neural-net fundamentals — limited but scoring when asked' },
+]
+
+// Question archetypes actually observed in Dec 2025 / June 2025 NET shifts
+export const NET_ARCHETYPES: Archetype[] = [
+  {
+    section: 'U4 DBMS (Dec 2025)',
+    items: [
+      'Candidate-key identification from FDs + normal-form classification',
+      'Serializability: conflict-equivalent schedule ordering',
+      'SQL: nested queries on aggregate/GROUP BY results',
+    ],
+  },
+  {
+    section: 'U2 COA (Dec 2025)',
+    items: [
+      'Pipelining: stage-hazard throughput/speedup computations',
+      'Grey-code ↔ binary conversion (asked verbatim Dec 2025)',
+    ],
+  },
+  {
+    section: 'U5 OS (Dec 2025)',
+    items: [
+      'Disk scheduling (SCAN/C-SCAN/SSTF): total head movement',
+      'CPU scheduling: avg waiting/turnaround for FCFS/SJF/RR',
+      'Security-technique matching (network security pairing)',
+    ],
+  },
+  {
+    section: 'U8 TOC & Compilers (Dec 2025)',
+    items: [
+      'DFA → NFA conversion & language acceptance',
+      'Bottom-up parsing: handle reduction sequence',
+    ],
+  },
+  {
+    section: 'U6 SE / U3 PL&G (Dec 2025)',
+    items: [
+      'COCOMO effort/EAF computation (organic vs embedded)',
+      'Testing-phase chronology (V&V ordering)',
+      '3D projections + programming-paradigm matching',
+    ],
+  },
+  {
+    section: 'U7 DSA (Dec 2025)',
+    items: [
+      'Greedy-method applicability + trace (fractional knapsack family)',
+      'Recurrence solving by substitution/master method',
+    ],
+  },
+  {
+    section: 'Paper 1 (June 2025 shifts, real)',
+    items: [
+      'Indian Logic: Pramana matching, hetvābhāsa fallacies, square of opposition, syllogism — 2+ Q per shift',
+      'ICT: malware/phishing, cybercrime types, RAM/ROM, MODEM/router/DNS, MOOC/SWAYAM, http/html full-forms — 4–5 Q',
+      'Environment: SDG goals (7,6,3,5…), pollutants, water treatment, Richter scale, noise pollution — 3–4 Q',
+      'Higher-Ed: NEP provisions, UGC/AICTE/ICSSR chronology, institutes — 3 Q',
+      'Research: sampling, pure vs exploratory, plagiarism, Bloom\u2019s taxonomy, AI-in-research — ~5 Q',
+      'Communication: Shannon model, PACE, types of communication',
+      'DI: percentage/ratio based — easy but lengthy; read units first',
+    ],
+  },
+]

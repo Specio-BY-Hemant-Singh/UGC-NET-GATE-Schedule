@@ -11,6 +11,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { formatISODay } from '@/lib/plan'
 import { AnimatePresence, motion } from 'framer-motion'
 import { CheckCheck, Inbox, Plus, Trash2, Undo2 } from 'lucide-react'
+import {
+  loadErrors, createErrorRemote, updateErrorRemote, deleteErrorRemote, mirrorErrors, localId, type StoredError,
+} from '@/lib/store'
 
 interface ErrorEntry {
   id: string
@@ -46,46 +49,47 @@ export default function ErrorLogPanel({ week, date }: ErrorLogPanelProps) {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    fetch('/api/errors')
-      .then((r) => r.json())
-      .then((j: { entries?: ErrorEntry[] }) => {
-        setEntries(j.entries ?? [])
+    let alive = true
+    loadErrors().then((rows) => {
+      if (alive) {
+        setEntries(rows as ErrorEntry[])
         setLoaded(true)
-      })
-      .catch(() => setLoaded(true))
+      }
+    })
+    return () => { alive = false }
   }, [])
 
   const addEntry = useCallback(async () => {
     if (!note.trim() || saving) return
     setSaving(true)
     try {
-      const res = await fetch('/api/errors', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date, week, subject, category, note }),
+      const fallbackId = localId()
+      const { id } = await createErrorRemote({ date, week, subject, category, note }, fallbackId)
+      setEntries((prev) => {
+        const next = [{ id, date, week, subject, category, note, resolved: false }, ...prev]
+        mirrorErrors(next as StoredError[])
+        return next
       })
-      const j: { entry?: ErrorEntry } = await res.json()
-      if (j.entry) {
-        setEntries((prev) => [j.entry as ErrorEntry, ...prev])
-        setNote('')
-      }
+      setNote('')
     } finally {
       setSaving(false)
     }
   }, [note, saving, date, week, subject, category])
 
   const toggleResolved = useCallback(async (id: string, resolved: boolean) => {
-    setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, resolved } : e)))
-    await fetch('/api/errors', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, resolved }),
-    }).catch(() => {})
+    setEntries((prev) => {
+      const next = prev.map((e) => (e.id === id ? { ...e, resolved } : e))
+      updateErrorRemote(id, resolved, next as StoredError[])
+      return next
+    })
   }, [])
 
   const removeEntry = useCallback(async (id: string) => {
-    setEntries((prev) => prev.filter((e) => e.id !== id))
-    await fetch(`/api/errors?id=${encodeURIComponent(id)}`, { method: 'DELETE' }).catch(() => {})
+    setEntries((prev) => {
+      const next = prev.filter((e) => e.id !== id)
+      deleteErrorRemote(id, next as StoredError[])
+      return next
+    })
   }, [])
 
   const counts = useMemo(

@@ -29,7 +29,7 @@ export interface BlockSpec {
 }
 
 export interface DaySpec {
-  kind: 'weekday' | 'saturday' | 'sunday' | 'exam'
+  kind: 'weekday' | 'saturday' | 'sunday' | 'mock' | 'exam'
   blocks: BlockSpec[]
 }
 
