@@ -119,6 +119,48 @@
   body {
     @apply bg-background text-foreground;
   }
+  ::selection {
+    background-color: oklch(0.72 0.13 175);
+    color: oklch(0.15 0 0);
+  }
+  .dark ::selection {
+    background-color: oklch(0.72 0.13 175);
+    color: oklch(0.98 0 0);
+  }
+}
+
+/* ── Slim, theme-aware scrollbars (webkit) ─────────────────────────────── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.78 0 0) transparent;
+}
+.dark * {
+  scrollbar-color: oklch(0.42 0 0) transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: oklch(0.78 0 0);
+  border-radius: 9999px;
+}
+.dark *::-webkit-scrollbar-thumb {
+  background-color: oklch(0.42 0 0);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: oklch(0.62 0 0);
+}
+.dark *::-webkit-scrollbar-thumb:hover {
+  background-color: oklch(0.55 0 0);
+}
+
+/* Tabular digits where dynamic numbers update — avoids jitter */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 /* ── Print: only the selected day plan card ─────────────────────────────── */

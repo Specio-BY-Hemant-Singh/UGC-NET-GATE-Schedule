@@ -212,11 +212,15 @@ export default function WeekView({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: Math.min(bi * 0.05, 0.3), duration: 0.28, ease: 'easeOut' }}
                   className={cn(
-                    'flex gap-3 rounded-xl border border-stone-200/80 bg-card p-3 transition-all dark:border-stone-800',
+                    'flex gap-3 overflow-hidden rounded-xl border border-stone-200/80 bg-card py-3 pr-3 transition-all dark:border-stone-800',
                     done ? 'opacity-65' : 'hover:border-stone-300 hover:shadow-sm dark:hover:border-stone-700',
                     blk.k === 'exam' && 'border-rose-300 dark:border-rose-800',
                   )}
                 >
+                  <span
+                    aria-hidden="true"
+                    className={cn('w-1 shrink-0 self-stretch', done ? subjColor.dot + ' opacity-35' : subjColor.dot)}
+                  />
                   <Checkbox
                     checked={done}
                     onCheckedChange={(v) => onToggleBlock(blk.key, v === true)}

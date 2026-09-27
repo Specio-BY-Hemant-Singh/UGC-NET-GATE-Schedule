@@ -294,6 +294,22 @@ export async function importBackup(data: unknown): Promise<{ completions: number
   }
 }
 
+// ── settings map loader (for widgets that need a single read) ───────────────
+export async function loadSettingsMap(): Promise<Record<string, string>> {
+  try {
+    const res = await fetch('/api/settings')
+    if (!res.ok) throw new Error(String(res.status))
+    const j: { settings?: Record<string, string> } = await res.json()
+    const merged = { ...lsGet<Record<string, string>>(LS.settings, {}), ...(j.settings ?? {}) }
+    lsSet(LS.settings, merged)
+    setMode('api')
+    return merged
+  } catch {
+    setMode('local')
+    return lsGet<Record<string, string>>(LS.settings, {})
+  }
+}
+
 // ── error log entries ────────────────────────────────────────────────────────
 export interface StoredError {
   id: string
@@ -367,6 +383,12 @@ export function deleteErrorRemote(id: string, mirror: StoredError[]) {
 }
 
 // ── mock scores ──────────────────────────────────────────────────────────────
+export interface MockSectionScore {
+  name: string
+  score: number
+  max: number
+}
+
 export interface StoredMock {
   id: string
   label: string
@@ -374,14 +396,26 @@ export interface StoredMock {
   score: number
   max: number
   takenOn: string
+  sections?: MockSectionScore[] | null
 }
 
 export async function loadMocks(): Promise<StoredMock[]> {
   try {
     const res = await fetch('/api/mocks')
     if (!res.ok) throw new Error(String(res.status))
-    const j: { mocks?: StoredMock[] } = await res.json()
-    const mocks = j.mocks ?? []
+    const j: { mocks?: (StoredMock & { sections?: string | null })[] } = await res.json()
+    const mocks = (j.mocks ?? []).map((m) => {
+      let sections: MockSectionScore[] | null = null
+      if (typeof m.sections === 'string') {
+        try {
+          const parsed = JSON.parse(m.sections)
+          if (Array.isArray(parsed) && parsed.length) sections = parsed
+        } catch {
+          /* legacy row — ignore */
+        }
+      }
+      return { ...m, sections }
+    })
     lsSet(LS.mocks, mocks)
     setMode('api')
     return mocks
@@ -389,6 +423,17 @@ export async function loadMocks(): Promise<StoredMock[]> {
     setMode('local')
     return lsGet<StoredMock[]>(LS.mocks, [])
   }
+}
+
+export function updateMockSectionsRemote(id: string, sections: MockSectionScore[], mirror: StoredMock[]) {
+  return persistMocksApi(
+    fetch('/api/mocks', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, sections }),
+    }),
+    mirror,
+  )
 }
 
 async function persistMocksApi(op: Promise<Response>, mirror: StoredMock[]) {
@@ -402,11 +447,14 @@ async function persistMocksApi(op: Promise<Response>, mirror: StoredMock[]) {
   }
 }
 
-export function createMockRemote(payload: Omit<StoredMock, 'id'>, fallbackId: string): Promise<{ id: string }> {
+export function createMockRemote(
+  payload: Omit<StoredMock, 'id'>,
+  fallbackId: string,
+): Promise<{ id: string }> {
   return fetch('/api/mocks', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ ...payload, sections: payload.sections?.length ? payload.sections : undefined }),
   })
     .then(async (res) => {
       if (!res.ok) throw new Error(String(res.status))

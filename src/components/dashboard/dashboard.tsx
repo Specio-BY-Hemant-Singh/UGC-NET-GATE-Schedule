@@ -20,6 +20,8 @@ import HabitPanel from './habit-panel'
 import ErrorLogPanel from './error-log-panel'
 import MockLedger from './mock-ledger'
 import PatternIntelCard from './pattern-intel'
+import WeekAudit from './week-audit'
+import FocusTimer from './focus-timer'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Input } from '@/components/ui/input'
@@ -166,13 +168,26 @@ function ThemeToggle() {
 }
 
 function StatCard({
-  icon: Icon, label, children,
-}: { icon: typeof Clock3; label: string; children: React.ReactNode }) {
+  icon: Icon, label, tone = 'stone', children,
+}: {
+  icon: typeof Clock3
+  label: string
+  tone?: 'emerald' | 'amber' | 'teal' | 'violet'
+  children: React.ReactNode
+}) {
+  const chip = {
+    emerald: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-300',
+    amber: 'bg-amber-100 text-amber-700 dark:bg-amber-950/70 dark:text-amber-300',
+    teal: 'bg-teal-100 text-teal-700 dark:bg-teal-950/70 dark:text-teal-300',
+    violet: 'bg-violet-100 text-violet-700 dark:bg-violet-950/70 dark:text-violet-300',
+  }[tone]
   return (
-    <Card className="rounded-2xl border-stone-200/80 shadow-sm dark:border-stone-800">
+    <Card className="group rounded-2xl border-stone-200/80 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-stone-800">
       <CardHeader className="flex flex-row items-center gap-2 pb-1 pt-3">
-        <Icon className="size-4 text-stone-500 dark:text-stone-400" />
-        <CardTitle className="text-xs font-medium uppercase tracking-wide text-stone-500 dark:text-stone-400">
+        <span className={cn('grid size-6 place-items-center rounded-lg transition-transform group-hover:scale-110', chip)}>
+          <Icon className="size-3.5" />
+        </span>
+        <CardTitle className="text-[11px] font-semibold uppercase tracking-wide text-stone-500 dark:text-stone-400">
           {label}
         </CardTitle>
       </CardHeader>
@@ -456,21 +471,21 @@ export default function Dashboard() {
         {/* ── Stat cards ───────────────────────────────────────────────────── */}
         <section aria-label="Progress overview" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {([
-              <StatCard key="p" icon={CheckCircle2} label="Overall Progress">
+              <StatCard key="p" icon={CheckCircle2} label="Overall Progress" tone="emerald">
                 <div className="flex items-end gap-1.5">
                   <span className="text-2xl font-bold leading-none tabular-nums">{overallPct}%</span>
                   <span className="pb-0.5 text-[11px] text-muted-foreground">{completions.size}/{TOTAL_TASKS} blocks</span>
                 </div>
                 <Progress value={overallPct} className="mt-2 h-1.5" />
               </StatCard>,
-              <StatCard key="h" icon={Clock3} label="Hours Banked">
+              <StatCard key="h" icon={Clock3} label="Hours Banked" tone="teal">
                 <div className="flex items-end gap-1.5">
                   <span className="text-2xl font-bold leading-none tabular-nums">{doneHours}h</span>
                   <span className="pb-0.5 text-[11px] text-muted-foreground">of ~{plannedHours}h planned</span>
                 </div>
                 <Progress value={plannedHours ? (doneMinutes / TOTAL_MINUTES) * 100 : 0} className="mt-2 h-1.5" />
               </StatCard>,
-              <StatCard key="s" icon={Flame} label="Habit Streak">
+              <StatCard key="s" icon={Flame} label="Habit Streak" tone="amber">
                 <div className="flex items-end gap-1.5">
                   <span className="text-2xl font-bold leading-none tabular-nums">{streak}</span>
                   <span className="pb-0.5 text-[11px] text-muted-foreground">day{streak === 1 ? '' : 's'} · 6 of 8 required</span>
@@ -483,7 +498,7 @@ export default function Dashboard() {
                   })}
                 </div>
               </StatCard>,
-              <StatCard key="w" icon={Target} label={`This Week · W${week}`}>
+              <StatCard key="w" icon={Target} label={`This Week · W${week}`} tone="violet">
                 <div className="flex items-end gap-1.5">
                   <span className="text-2xl font-bold leading-none tabular-nums">{weekPct}%</span>
                   <span className="pb-0.5 text-[11px] text-muted-foreground">{weekDone}/{weekTotal} blocks</span>
@@ -556,6 +571,7 @@ export default function Dashboard() {
               const pct = total ? Math.round((done / total) * 100) : 0
               const active = w.week === week
               const isNow = located?.week === w.week
+              const isExamWeek = w.days.some((d) => d.kind === 'exam')
               return (
                 <button
                   key={w.week}
@@ -566,10 +582,14 @@ export default function Dashboard() {
                     active
                       ? 'border-stone-900 bg-stone-900 text-white shadow-md dark:border-white dark:bg-white dark:text-stone-900'
                       : 'border-stone-200 bg-card hover:border-stone-400 hover:shadow-sm dark:border-stone-800',
+                    isExamWeek && !active && 'border-rose-300 dark:border-rose-900',
                   )}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold">W{w.week}</span>
+                    <span className="flex items-center gap-1 text-xs font-bold">
+                      W{w.week}
+                      {isExamWeek && <Flag className="size-2.5 text-rose-500" aria-label="exam week" />}
+                    </span>
                     <span className={cn('size-1.5 rounded-full', PHASE_TONE[w.phase])} title={PHASES[w.phase].name} />
                   </div>
                   <div className={cn('mt-0.5 truncate text-[10px]', active ? 'text-white/70 dark:text-stone-600' : 'text-muted-foreground')}>
@@ -597,16 +617,20 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_340px]">
-            <WeekView
-              week={weekPlan}
-              dayIndex={day}
-              onDayChange={setDay}
-              completions={completions}
-              onToggleBlock={toggleBlock}
-              onSetDay={setDayBlocks}
-              today={today}
-            />
+            <div className="min-w-0 space-y-4">
+              <WeekView
+                week={weekPlan}
+                dayIndex={day}
+                onDayChange={setDay}
+                completions={completions}
+                onToggleBlock={toggleBlock}
+                onSetDay={setDayBlocks}
+                today={today}
+              />
+              <WeekAudit week={week} weekPct={weekPct} isSunday={day === 6} />
+            </div>
             <div className="space-y-4">
+              <FocusTimer />
               <HabitPanel
                 date={weekPlan.days[day]?.date ?? today}
                 habits={HABITS}

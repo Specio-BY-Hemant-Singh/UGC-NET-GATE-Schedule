@@ -58,6 +58,7 @@ model MockScore {
   score     Float
   max       Float
   takenOn   String   // ISO date
+  sections  String?  // optional JSON: [{name,score,max}] — section-wise breakdown
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
