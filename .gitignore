@@ -42,14 +42,13 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 local-*
-.local-tooling
-.sandbox-config
 *.log
 dev.log
 dev.out.log
 test
 prompt
 server.log
+worklog.md
 
 # Skills directory (sandbox tooling)
 /skills/

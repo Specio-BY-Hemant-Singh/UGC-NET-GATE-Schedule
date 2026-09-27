@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     "19-week merged execution dashboard for GATE 2027 Data Science & AI (95+) and UGC NET December 2026 Computer Science (250+): daily topic-wise timetable, habit tracker and saved progress.",
   keywords: ["GATE 2027 DA", "UGC NET 2026", "study planner", "habit tracker", "exam dashboard"],
   icons: {
-    icon: "https:///logo.svg",
+    icon: "/logo.svg",
   },
 };
 
